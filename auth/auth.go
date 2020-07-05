@@ -17,12 +17,12 @@ func configuracion() {
 	}
 }
 
-func ValidateToken(t string) (bool, error) {
+func ValidateToken(t string) (*jwt.Token, bool, error) {
 	configuracion()
 	var jwtSecret = []byte(viper.GetString("frasesecreta"))
 
 	if t == "" {
-		return false, gqlerrors.FormatError(errors.New("Authorization token must be present"))
+		return nil, false, gqlerrors.FormatError(errors.New("Authorization token must be present"))
 	}
 
 	token, _ := jwt.Parse(t, func(token *jwt.Token) (interface{}, error) {
@@ -33,8 +33,8 @@ func ValidateToken(t string) (bool, error) {
 	})
 
 	if _, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		return true, nil
+		return token, true, nil
 	} else {
-		return false, gqlerrors.FormatError(errors.New("Invalid authorization token"))
+		return nil, false, gqlerrors.FormatError(errors.New("Invalid authorization token"))
 	}
 }

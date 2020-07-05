@@ -22,15 +22,12 @@ func configuracion() {
 
 func main() {
 	configuracion()
-	fs := http.FileServer(http.Dir("static"))
-	http.HandleFunc("/graphql", graphqlHandler)
-	http.Handle("/", fs)
+	http.HandleFunc("/", graphqlHandler)
 	http.ListenAndServe(":"+viper.GetString("puerto"), nil)
 }
 
 func graphqlHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "POST":
+	if r.Method == "POST" {
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			panic(err)
@@ -58,8 +55,5 @@ func graphqlHandler(w http.ResponseWriter, r *http.Request) {
 			Context:        context.WithValue(context.Background(), "token", token),
 		})
 		json.NewEncoder(w).Encode(result)
-
-	default:
-		fmt.Fprintf(w, "Solo está soportado el metodo POST.")
 	}
 }

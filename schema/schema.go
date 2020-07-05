@@ -18,13 +18,14 @@ func init() {
 			"pagosach": &graphql.Field{
 				Type: graphql.NewList(types.PagoACHType),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					isValid, err := auth.ValidateToken(p.Context.Value("token").(string))
+					_, isValid, err := auth.ValidateToken(p.Context.Value("token").(string))
 					if err != nil {
 						return nil, err
 					}
 					if !isValid {
-						return nil, gqlerrors.FormatError(errors.New("Invalid token"))
+						return nil, gqlerrors.FormatError(errors.New("token invalido"))
 					}
+
 					return resolvers.ListarPagosACH(), nil
 				},
 			},
@@ -76,12 +77,12 @@ func init() {
 					},
 				},
 				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-					isValid, err := auth.ValidateToken(params.Context.Value("token").(string))
+					_, isValid, err := auth.ValidateToken(params.Context.Value("token").(string))
 					if err != nil {
 						return nil, err
 					}
 					if !isValid {
-						return nil, gqlerrors.FormatError(errors.New("Invalid token"))
+						return nil, gqlerrors.FormatError(errors.New("token invalido"))
 					}
 
 					nombre, _ := params.Args["nombre"].(string)
