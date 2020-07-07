@@ -23,7 +23,7 @@ func init() {
 						return nil, err
 					}
 					if !isValid {
-						return nil, gqlerrors.FormatError(errors.New("token invalido"))
+						return nil, gqlerrors.FormatError(errors.New("Token de autorización inválido"))
 					}
 
 					return resolvers.ListarPagosACH(), nil
@@ -82,7 +82,7 @@ func init() {
 						return nil, err
 					}
 					if !isValid {
-						return nil, gqlerrors.FormatError(errors.New("token invalido"))
+						return nil, gqlerrors.FormatError(errors.New("Token de autorización inválido"))
 					}
 
 					nombre, _ := params.Args["nombre"].(string)

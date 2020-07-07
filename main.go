@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"rws/schema"
+	"strings"
 )
 
 func configuracion() {
@@ -45,15 +46,30 @@ func graphqlHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 
-		token := r.Header.Get("token")
+		authorizationHeader := r.Header.Get("Authorization")
 
-		result := graphql.Do(graphql.Params{
-			Schema:         schema.Schema,
-			RequestString:  graphQLPostBody.Query,
-			VariableValues: graphQLPostBody.Variables,
-			OperationName:  graphQLPostBody.OperationName,
-			Context:        context.WithValue(context.Background(), "token", token),
-		})
-		json.NewEncoder(w).Encode(result)
+		if authorizationHeader != "" {
+			authHeader := strings.Split(authorizationHeader, "Bearer ")
+			if len(authHeader) == 2 {
+				var jwtToken string
+
+				if authHeader[1] != "" {
+					jwtToken = authHeader[1]
+				}
+
+				result := graphql.Do(graphql.Params{
+					Schema:         schema.Schema,
+					RequestString:  graphQLPostBody.Query,
+					VariableValues: graphQLPostBody.Variables,
+					OperationName:  graphQLPostBody.OperationName,
+					Context:        context.WithValue(context.Background(), "token", jwtToken),
+				})
+				json.NewEncoder(w).Encode(result)
+			} else {
+				json.NewEncoder(w).Encode("Token de autorización inválido")
+			}
+		} else {
+			json.NewEncoder(w).Encode("Se requiere un encabezado de autorización")
+		}
 	}
 }
