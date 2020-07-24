@@ -1,12 +1,7 @@
 package schema
 
 import (
-	"errors"
 	"github.com/graphql-go/graphql"
-	"github.com/graphql-go/graphql/gqlerrors"
-	"rws/auth"
-	"rws/resolvers"
-	"rws/types"
 )
 
 var Schema graphql.Schema
@@ -15,89 +10,56 @@ func init() {
 	Query := graphql.NewObject(graphql.ObjectConfig{
 		Name: "Query",
 		Fields: graphql.Fields{
-			"pagosach": &graphql.Field{
-				Type: graphql.NewList(types.PagoACHType),
-				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					_, isValid, err := auth.ValidateToken(p.Context.Value("token").(string))
-					if err != nil {
-						return nil, err
-					}
-					if !isValid {
-						return nil, gqlerrors.FormatError(errors.New("Token de autorización inválido"))
-					}
-
-					return resolvers.ListarPagosACH(), nil
-				},
-			},
+			//Formulario de Pago por ACH
+			"pagoach_listar": PagoACHQuery()["pagoach_listar"],
+			//Formulario de Solicitud de Estado de Cuenta
+			"estadocuenta_listar": EstadoCuentaQuery()["estadocuenta_listar"],
+			//Formulario de Comprobante de Pago
+			"comprobantepago_listar": ComprobantePagoQuery()["comprobantepago_listar"],
+			//Formulario de Solicitud de Aplazamiento de Pagos por la Crisis del COVID-19
+			"solicitudaplazamientopago_listar": SolicitudAplazamientoPagoQuery()["solicitudaplazamientopago_listar"],
+			//Formulario de Prevención de Fraude
+			"prevencionfraude_listar": PrevencionFraudeQuery()["prevencionfraude_listar"],
+			//Formulario de Solicitud Tarjeta Rodelag
+			"solicitudtarjetarodelag_listar": SolicitudTarjetaRodelagQuery()["solicitudtarjetarodelag_listar"],
+			//Formulario de Reclamo
+			"reclamo_listar": ReclamoQuery()["reclamo_listar"],
+			//Formulario de Notificación Descuento
+			"notificaciondescuento_listar": NotificacionDescuentoQuery()["notificaciondescuento_listar"],
+			//Formulario de Contáctenos
+			"contactenos_listar": ContactenosQuery()["contactenos_listar"],
+			//Formulario de Contáctenos de ventas comerciales
+			"contactenosvc_listar": ContactenosVCQuery()["contactenosvc_listar"],
+			//Encuesta de Satisfacción Instalación AA
+			"esiaa_listar": EsiaaQuery()["esiaa_listar"],
 		},
 	})
 
 	Mutation := graphql.NewObject(graphql.ObjectConfig{
 		Name: "Mutation",
 		Fields: graphql.Fields{
-			"crearpagoach": &graphql.Field{
-				Type:        types.PagoACHType,
-				Description: "Creación de pago ACH",
-				Args: graphql.FieldConfigArgument{
-					"nombre": &graphql.ArgumentConfig{
-						Type:        graphql.String,
-						Description: "Nombre del cliente",
-					},
-					"apellido": &graphql.ArgumentConfig{
-						Type:        graphql.String,
-						Description: "Apellido del cliente",
-					},
-					"titularCuenta": &graphql.ArgumentConfig{
-						Type:        graphql.String,
-						Description: "Titular de la cuenta",
-					},
-					"cedula": &graphql.ArgumentConfig{
-						Type:        graphql.String,
-						Description: "Cédula del cliente",
-					},
-					"correo": &graphql.ArgumentConfig{
-						Type:        graphql.String,
-						Description: "Correo del cliente",
-					},
-					"telefono": &graphql.ArgumentConfig{
-						Type:        graphql.String,
-						Description: "Teléfono del cliente",
-					},
-					"compraOrigen": &graphql.ArgumentConfig{
-						Type:        graphql.String,
-						Description: "Lugar donde hizo la compra",
-					},
-					"numeroOrden": &graphql.ArgumentConfig{
-						Type:        graphql.String,
-						Description: "Pedido o Cotización",
-					},
-					"fotoComprobante": &graphql.ArgumentConfig{
-						Type:        graphql.String,
-						Description: "Foto del comprobante de pago",
-					},
-				},
-				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-					_, isValid, err := auth.ValidateToken(params.Context.Value("token").(string))
-					if err != nil {
-						return nil, err
-					}
-					if !isValid {
-						return nil, gqlerrors.FormatError(errors.New("Token de autorización inválido"))
-					}
-
-					nombre, _ := params.Args["nombre"].(string)
-					apellido, _ := params.Args["apellido"].(string)
-					titularCuenta, _ := params.Args["titularCuenta"].(string)
-					cedula, _ := params.Args["cedula"].(string)
-					correo, _ := params.Args["correo"].(string)
-					telefono, _ := params.Args["telefono"].(string)
-					compraOrigen, _ := params.Args["compraOrigen"].(string)
-					numeroOrden, _ := params.Args["numeroOrden"].(string)
-					fotoComprobante, _ := params.Args["fotoComprobante"].(string)
-
-					return resolvers.CrearPagoACH(nombre, apellido, titularCuenta, cedula, correo, telefono, compraOrigen, numeroOrden, fotoComprobante), nil
-				},
-			},
+			//Formulario de Pago por ACH
+			"pagoach_crear": PagoACHMutation()["pagoach_crear"],
+			//Formulario de Solicitud de Estado de Cuenta
+			"estadocuenta_crear": EstadoCuentaMutation()["estadocuenta_crear"],
+			//Formulario de Comprobante de Pago
+			"comprobantepago_crear": ComprobantePagoMutation()["comprobantepago_crear"],
+			//Formulario de Solicitud de Aplazamiento de Pagos por la Crisis del COVID-19
+			"solicitudaplazamientopago_crear": SolicitudAplazamientoPagoMutation()["solicitudaplazamientopago_crear"],
+			//Formulario de Prevención de Fraude
+			"prevencionfraude_crear": PrevencionFraudeMutation()["prevencionfraude_crear"],
+			//Formulario de Solicitud Tarjeta Rodelag
+			"solicitudtarjetarodelag_crear": SolicitudTarjetaRodelagMutation()["solicitudtarjetarodelag_crear"],
+			//Formulario de Reclamo
+			"reclamo_crear": ReclamoMutation()["reclamo_crear"],
+			//Formulario de Notificación Descuento
+			"notificaciondescuento_crear": NotificacionDescuentoMutation()["notificaciondescuento_crear"],
+			//Formulario de Contáctenos
+			"contactenos_crear": ContactenosMutation()["contactenos_crear"],
+			//Formulario de Contáctenos de ventas comerciales
+			"contactenosvc_crear": ContactenosVCMutation()["contactenosvc_crear"],
+			//Encuesta de Satisfacción Instalación AA
+			"esiaa_crear": EsiaaMutation()["esiaa_crear"],
 		},
 	})
 

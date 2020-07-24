@@ -63,7 +63,7 @@ func conexion() *sql.DB {
 	return connMySQL
 }
 
-func ListarPagosACH() []PagoACH {
+func ListarPagoACH() []PagoACH {
 	rows, err := conexion().Query("SELECT * FROM formulario_pagosach;")
 	logError("Problemas al listar los registros de la base de datos: ", err)
 	defer rows.Close()
