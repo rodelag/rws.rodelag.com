@@ -47,7 +47,10 @@ type SolicitudTarjetaRodelag struct {
 }
 
 func ListarSolicitudTarjetaRodelag() []SolicitudTarjetaRodelag {
-	rows, err := conexion().Query("SELECT * FROM formulario_solicitudtarjeta;")
+	connMySQL := conexion()
+	defer connMySQL.Close()
+
+	rows, err := connMySQL.Query("SELECT * FROM formulario_solicitudtarjeta;")
 	logError("Problemas al listar los registros de la base de datos: ", err)
 	defer rows.Close()
 
@@ -218,7 +221,10 @@ func CrearSolicitudTarjetaRodelag(
 		FechaRegistro:          time.Now().Format("2006-01-02 15:04:05"),
 	}
 
-	conn, err := conexion().Prepare("INSERT INTO formulario_solicitudtarjeta (sucursal, nombre, apellido, fechaNacimiento, lugarNacimiento, nacionalidad, cedula, fotoCedula, fotoFicha, fotoRecibo, estadoCivil, correo, direccionResidencia, barrio, provincia, telefonoResidencia, celular, credito, educacion, nombreEmpresa, tipoNegocio, cargo, tiempoLaboral, direccionTrabajo, telefonoTrabajo, extension, salarioMensual, fuentesIngreso, montoFuentesIngreso, detalleFuentesIngreso, nombreReferenciaUno, telefonoReferenciaUno, nombreReferenciaDos, telefonoReferenciaDos, nombreReferenciaTres, telefonoReferenciaTres, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+	connMySQL := conexion()
+	defer connMySQL.Close()
+
+	conn, err := connMySQL.Prepare("INSERT INTO formulario_solicitudtarjeta (sucursal, nombre, apellido, fechaNacimiento, lugarNacimiento, nacionalidad, cedula, fotoCedula, fotoFicha, fotoRecibo, estadoCivil, correo, direccionResidencia, barrio, provincia, telefonoResidencia, celular, credito, educacion, nombreEmpresa, tipoNegocio, cargo, tiempoLaboral, direccionTrabajo, telefonoTrabajo, extension, salarioMensual, fuentesIngreso, montoFuentesIngreso, detalleFuentesIngreso, nombreReferenciaUno, telefonoReferenciaUno, nombreReferenciaDos, telefonoReferenciaDos, nombreReferenciaTres, telefonoReferenciaTres, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 	logError("Problemas al crear el registro en la base de datos: ", err)
 	defer conn.Close()
 

@@ -155,7 +155,7 @@ var SolicitudTarjetaRodelagType = graphql.NewObject(graphql.ObjectConfig{
 			Description: "Teléfono de referencia número tres",
 		},
 		"fechaRegistro": &graphql.Field{
-			Type:        graphql.DateTime,
+			Type:        graphql.String,
 			Description: "Fecha del registro",
 		},
 	},

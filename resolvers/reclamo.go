@@ -19,7 +19,10 @@ type Reclamo struct {
 }
 
 func ListarReclamo() []Reclamo {
-	rows, err := conexion().Query("SELECT * FROM formulario_reclamo;")
+	connMySQL := conexion()
+	defer connMySQL.Close()
+
+	rows, err := connMySQL.Query("SELECT * FROM formulario_reclamo;")
 	logError("Problemas al listar los registros de la base de datos: ", err)
 	defer rows.Close()
 
@@ -69,7 +72,10 @@ func CrearReclamo(nombre, apellido, cedula, correo, telefono, tipoReclamo, detal
 		FechaRegistro:    time.Now().Format("2006-01-02 15:04:05"),
 	}
 
-	conn, err := conexion().Prepare("INSERT INTO formulario_reclamo (nombre, apellido, cedula, correo, telefono, tipoReclamo, detalle, adjuntoDocumento, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+	connMySQL := conexion()
+	defer connMySQL.Close()
+
+	conn, err := connMySQL.Prepare("INSERT INTO formulario_reclamo (nombre, apellido, cedula, correo, telefono, tipoReclamo, detalle, adjuntoDocumento, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
 	logError("Problemas al crear el registro en la base de datos: ", err)
 	defer conn.Close()
 

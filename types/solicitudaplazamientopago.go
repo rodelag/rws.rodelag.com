@@ -67,7 +67,7 @@ var SolicitudAplazamientoPagoType = graphql.NewObject(graphql.ObjectConfig{
 			Description: "Carta del motivo",
 		},
 		"fechaRegistro": &graphql.Field{
-			Type:        graphql.DateTime,
+			Type:        graphql.String,
 			Description: "Fecha del registro",
 		},
 	},

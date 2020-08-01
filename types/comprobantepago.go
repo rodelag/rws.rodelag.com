@@ -35,7 +35,7 @@ var ComprobantePagoType = graphql.NewObject(graphql.ObjectConfig{
 			Description: "Comprobante de pago",
 		},
 		"fechaRegistro": &graphql.Field{
-			Type:        graphql.DateTime,
+			Type:        graphql.String,
 			Description: "Fecha del registro",
 		},
 	},

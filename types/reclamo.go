@@ -43,7 +43,7 @@ var ReclamoType = graphql.NewObject(graphql.ObjectConfig{
 			Description: "Documento o foto del reclamo",
 		},
 		"fechaRegistro": &graphql.Field{
-			Type:        graphql.DateTime,
+			Type:        graphql.String,
 			Description: "Fecha del registro",
 		},
 	},

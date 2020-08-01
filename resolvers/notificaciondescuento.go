@@ -23,7 +23,10 @@ type NotificacionDescuento struct {
 }
 
 func ListarNotificacionDescuento() []NotificacionDescuento {
-	rows, err := conexion().Query("SELECT * FROM formulario_notificaciondescuento;")
+	connMySQL := conexion()
+	defer connMySQL.Close()
+
+	rows, err := connMySQL.Query("SELECT * FROM formulario_notificaciondescuento;")
 	logError("Problemas al listar los registros de la base de datos: ", err)
 	defer rows.Close()
 
@@ -85,7 +88,10 @@ func CrearNotificacionDescuento(nombre, apellido, sucursal, fecha, nombreProduct
 		FechaRegistro:    time.Now().Format("2006-01-02 15:04:05"),
 	}
 
-	conn, err := conexion().Prepare("INSERT INTO formulario_notificaciondescuento (nombre, apellido, sucursal, fecha, nombreProducto, fotoPrecio, codigoParte, cantidadVendidas, nombreCompetidor, precioCompetidor, precioRodelag, fotoCotizacion, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+	connMySQL := conexion()
+	defer connMySQL.Close()
+
+	conn, err := connMySQL.Prepare("INSERT INTO formulario_notificaciondescuento (nombre, apellido, sucursal, fecha, nombreProducto, fotoPrecio, codigoParte, cantidadVendidas, nombreCompetidor, precioCompetidor, precioRodelag, fotoCotizacion, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 	logError("Problemas al crear el registro en la base de datos: ", err)
 	defer conn.Close()
 

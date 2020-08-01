@@ -39,7 +39,7 @@ var ContactenosVCType = graphql.NewObject(graphql.ObjectConfig{
 			Description: "Detalle de solicitud o cotización.",
 		},
 		"fechaRegistro": &graphql.Field{
-			Type:        graphql.DateTime,
+			Type:        graphql.String,
 			Description: "Fecha del registro",
 		},
 	},

@@ -51,7 +51,7 @@ var EsiaaType = graphql.NewObject(graphql.ObjectConfig{
 			Description: "Calificación del cliente en general",
 		},
 		"fechaRegistro": &graphql.Field{
-			Type:        graphql.DateTime,
+			Type:        graphql.String,
 			Description: "Fecha del registro",
 		},
 	},

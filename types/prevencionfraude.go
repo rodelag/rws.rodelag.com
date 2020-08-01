@@ -39,7 +39,7 @@ var PrevencionFraudeType = graphql.NewObject(graphql.ObjectConfig{
 			Description: "Foto frontal de la tarjeta",
 		},
 		"fechaRegistro": &graphql.Field{
-			Type:        graphql.DateTime,
+			Type:        graphql.String,
 			Description: "Fecha del registro",
 		},
 	},

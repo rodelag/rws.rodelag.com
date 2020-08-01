@@ -64,7 +64,10 @@ func conexion() *sql.DB {
 }
 
 func ListarPagoACH() []PagoACH {
-	rows, err := conexion().Query("SELECT * FROM formulario_pagosach;")
+	connMySQL := conexion()
+	defer connMySQL.Close()
+
+	rows, err := connMySQL.Query("SELECT * FROM formulario_pagosach;")
 	logError("Problemas al listar los registros de la base de datos: ", err)
 	defer rows.Close()
 
@@ -105,7 +108,10 @@ func CrearPagoACH(nombre string, apellido string, titularCuenta string, cedula s
 		FechaRegistro:   time.Now().UTC().Format("2006-01-02 15:04:05"),
 	}
 
-	conn, err := conexion().Prepare("INSERT INTO formulario_pagosach (nombre, apellido, titularCuenta, cedula, correo, telefono, compraOrigen, numeroOrden, fotoComprobante, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+	connMySQL := conexion()
+	defer connMySQL.Close()
+
+	conn, err := connMySQL.Prepare("INSERT INTO formulario_pagosach (nombre, apellido, titularCuenta, cedula, correo, telefono, compraOrigen, numeroOrden, fotoComprobante, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 	logError("Problemas al crear el registro en la base de datos: ", err)
 	defer conn.Close()
 

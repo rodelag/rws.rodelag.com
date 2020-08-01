@@ -31,7 +31,7 @@ var ContactenosType = graphql.NewObject(graphql.ObjectConfig{
 			Description: "Mensaje del cliente",
 		},
 		"fechaRegistro": &graphql.Field{
-			Type:        graphql.DateTime,
+			Type:        graphql.String,
 			Description: "Fecha del registro",
 		},
 	},

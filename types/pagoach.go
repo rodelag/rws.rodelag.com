@@ -47,7 +47,7 @@ var PagoACHType = graphql.NewObject(graphql.ObjectConfig{
 			Description: "Foto del comprobante de pago",
 		},
 		"fechaRegistro": &graphql.Field{
-			Type:        graphql.DateTime,
+			Type:        graphql.String,
 			Description: "Fecha del registro",
 		},
 	},

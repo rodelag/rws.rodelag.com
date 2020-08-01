@@ -59,7 +59,7 @@ var NotificacionDescuentoType = graphql.NewObject(graphql.ObjectConfig{
 			Description: "Foto de la cotización",
 		},
 		"fechaRegistro": &graphql.Field{
-			Type:        graphql.DateTime,
+			Type:        graphql.String,
 			Description: "Fecha del registro",
 		},
 	},

@@ -16,7 +16,10 @@ type SolicitudEstadoCuenta struct {
 }
 
 func ListarEstadoCuenta() []SolicitudEstadoCuenta {
-	rows, err := conexion().Query("SELECT * FROM formulario_estadocuenta;")
+	connMySQL := conexion()
+	defer connMySQL.Close()
+
+	rows, err := connMySQL.Query("SELECT * FROM formulario_estadocuenta;")
 	logError("Problemas al listar los registros de la base de datos: ", err)
 	defer rows.Close()
 
@@ -49,7 +52,10 @@ func CrearSolicitudEstadoCuenta(nombre string, apellido string, correo string, t
 		FechaRegistro: time.Now().Format("2006-01-02 15:04:05"),
 	}
 
-	conn, err := conexion().Prepare("INSERT INTO formulario_estadocuenta (nombre, apellido, correo, telefono, cedula, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?)")
+	connMySQL := conexion()
+	defer connMySQL.Close()
+
+	conn, err := connMySQL.Prepare("INSERT INTO formulario_estadocuenta (nombre, apellido, correo, telefono, cedula, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?)")
 	logError("Problemas al crear el registro en la base de datos: ", err)
 	defer conn.Close()
 

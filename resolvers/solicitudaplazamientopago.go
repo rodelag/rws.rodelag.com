@@ -25,7 +25,10 @@ type SolicitudAplazamientoPago struct {
 }
 
 func ListarSolicitudAplazamientoPago() []SolicitudAplazamientoPago {
-	rows, err := conexion().Query("SELECT * FROM formulario_aplazamientopago;")
+	connMySQL := conexion()
+	defer connMySQL.Close()
+
+	rows, err := connMySQL.Query("SELECT * FROM formulario_aplazamientopago;")
 	logError("Problemas al listar los registros de la base de datos: ", err)
 	defer rows.Close()
 
@@ -93,7 +96,10 @@ func CrearSolicitudAplazamientoPago(nombre, apellido, correo, telefonoCasa, celu
 		FechaRegistro:          time.Now().Format("2006-01-02 15:04:05"),
 	}
 
-	conn, err := conexion().Prepare("INSERT INTO formulario_aplazamientopago (nombre, apellido, correo, telefonoCasa, celular, tipoProducto, tipoCliente, tipoActividadEconomica, lugarTrabajo, motivoSolicitud, detalleMotivo, cedula, talonario, cartaMotivo, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+	connMySQL := conexion()
+	defer connMySQL.Close()
+
+	conn, err := connMySQL.Prepare("INSERT INTO formulario_aplazamientopago (nombre, apellido, correo, telefonoCasa, celular, tipoProducto, tipoCliente, tipoActividadEconomica, lugarTrabajo, motivoSolicitud, detalleMotivo, cedula, talonario, cartaMotivo, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 	logError("Problemas al crear el registro en la base de datos: ", err)
 	defer conn.Close()
 
