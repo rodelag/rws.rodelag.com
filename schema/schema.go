@@ -11,6 +11,7 @@ func init() {
 		Name: "Query",
 		Fields: graphql.Fields{
 			//Formulario de Pago por ACH
+			"pagoach_ver":    PagoACHQuery()["pagoach_ver"],
 			"pagoach_listar": PagoACHQuery()["pagoach_listar"],
 			//Formulario de Solicitud de Estado de Cuenta
 			"estadocuenta_listar": EstadoCuentaQuery()["estadocuenta_listar"],

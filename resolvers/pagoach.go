@@ -22,6 +22,18 @@ type PagoACH struct {
 	NumeroOrden     string
 	FotoComprobante string
 	FechaRegistro   string
+	Estados         []EstadoPagoACH
+}
+
+type EstadoPagoACH struct {
+	ID,
+	Estado,
+	Comentario,
+	FechaRegistro,
+	Formulario,
+	Usuario,
+	CorreoUsuario,
+	IDFormulario string
 }
 
 func configuracion() {
@@ -63,6 +75,56 @@ func conexion() *sql.DB {
 	return connMySQL
 }
 
+func VerPagoACH(id int) PagoACH {
+	connMySQL := conexion()
+	defer connMySQL.Close()
+
+	pagoACH := PagoACH{
+		Estados: func() []EstadoPagoACH {
+			consulta := fmt.Sprintf("SELECT * FROM formulario_estado WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_pagosach", id)
+
+			rows, err := connMySQL.Query(consulta)
+			logError("Problemas al listar los estados de los registros de la base de datos: ", err)
+			defer rows.Close()
+
+			estado, estados := EstadoPagoACH{}, []EstadoPagoACH{}
+
+			for rows.Next() {
+				err := rows.Scan(&estado.ID, &estado.Estado, &estado.Comentario, &estado.FechaRegistro, &estado.Formulario, &estado.Usuario, &estado.CorreoUsuario, &estado.IDFormulario)
+				logError("Problemas leer los estados: ", err)
+				estados = append(estados, EstadoPagoACH{
+					ID:            estado.ID,
+					Estado:        estado.Estado,
+					Comentario:    estado.Comentario,
+					FechaRegistro: estado.FechaRegistro,
+					Formulario:    estado.Formulario,
+					Usuario:       estado.Usuario,
+					CorreoUsuario: estado.CorreoUsuario,
+					IDFormulario:  estado.IDFormulario,
+				})
+			}
+			return estados
+		}(),
+	}
+
+	err := connMySQL.QueryRow("SELECT * FROM formulario_pagosach WHERE id = ?;", id).Scan(
+		&pagoACH.ID,
+		&pagoACH.Nombre,
+		&pagoACH.Apellido,
+		&pagoACH.TitularCuenta,
+		&pagoACH.Cedula,
+		&pagoACH.Correo,
+		&pagoACH.Telefono,
+		&pagoACH.CompraOrigen,
+		&pagoACH.NumeroOrden,
+		&pagoACH.FotoComprobante,
+		&pagoACH.FechaRegistro,
+	)
+	logError("Problemas al leer registro: ", err)
+
+	return pagoACH
+}
+
 func ListarPagoACH() []PagoACH {
 	connMySQL := conexion()
 	defer connMySQL.Close()
@@ -89,6 +151,31 @@ func ListarPagoACH() []PagoACH {
 			NumeroOrden:     pagoACH.NumeroOrden,
 			FotoComprobante: pagoACH.FotoComprobante,
 			FechaRegistro:   pagoACH.FechaRegistro,
+			Estados: func() []EstadoPagoACH {
+				consulta := fmt.Sprintf("SELECT * FROM formulario_estado WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_pagosach", pagoACH.ID)
+
+				rows, err := connMySQL.Query(consulta)
+				logError("Problemas al listar los estados de los registros de la base de datos: ", err)
+				defer rows.Close()
+
+				estado, estados := EstadoPagoACH{}, []EstadoPagoACH{}
+
+				for rows.Next() {
+					err := rows.Scan(&estado.ID, &estado.Estado, &estado.Comentario, &estado.FechaRegistro, &estado.Formulario, &estado.Usuario, &estado.CorreoUsuario, &estado.IDFormulario)
+					logError("Problemas leer los estados: ", err)
+					estados = append(estados, EstadoPagoACH{
+						ID:            estado.ID,
+						Estado:        estado.Estado,
+						Comentario:    estado.Comentario,
+						FechaRegistro: estado.FechaRegistro,
+						Formulario:    estado.Formulario,
+						Usuario:       estado.Usuario,
+						CorreoUsuario: estado.CorreoUsuario,
+						IDFormulario:  estado.IDFormulario,
+					})
+				}
+				return estados
+			}(),
 		})
 	}
 	return pagosACH

@@ -11,8 +11,33 @@ import (
 
 func PagoACHQuery() map[string]*graphql.Field {
 	schemas := map[string]*graphql.Field{
+		"pagoach_ver": {
+			Type:        types.PagoACHType,
+			Description: "Ver pago ACH",
+			Args: graphql.FieldConfigArgument{
+				"id": &graphql.ArgumentConfig{
+					Type:        graphql.Int,
+					Description: "ID del registro",
+				},
+			},
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				_, isValid, err := auth.ValidateToken(p.Context.Value("token").(string))
+				if err != nil {
+					return nil, err
+				}
+				if !isValid {
+					return nil, gqlerrors.FormatError(errors.New("Token de autorización inválido"))
+				}
+
+				if id, ok := p.Args["id"].(int); ok {
+					return resolvers.VerPagoACH(id), nil
+				}
+				return nil, nil
+			},
+		},
 		"pagoach_listar": {
-			Type: graphql.NewList(types.PagoACHType),
+			Type:        graphql.NewList(types.PagoACHType),
+			Description: "Listar pagos ACH",
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				_, isValid, err := auth.ValidateToken(p.Context.Value("token").(string))
 				if err != nil {
