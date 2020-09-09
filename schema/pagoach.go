@@ -119,6 +119,53 @@ func PagoACHMutation() map[string]*graphql.Field {
 				return resolvers.CrearPagoACH(nombre, apellido, titularCuenta, cedula, correo, telefono, compraOrigen, numeroOrden, fotoComprobante), nil
 			},
 		},
+		"pagoach_crear_estado": &graphql.Field{
+			Type:        types.PagoACHEstadoType,
+			Description: "Creación de los estados del pago por ACH",
+			Args: graphql.FieldConfigArgument{
+				"estado": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Estado del registro",
+				},
+				"comentario": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Comentario del agente para con el registro",
+				},
+				"formulario": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Formulario al que pertenece el estado",
+				},
+				"usuario": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Usuario que gestiona el registro",
+				},
+				"correoUsuario": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Correo del usuario que gestiona el registro",
+				},
+				"idFormulario": &graphql.ArgumentConfig{
+					Type:        graphql.Int,
+					Description: "ID del registro",
+				},
+			},
+			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
+				_, isValid, err := auth.ValidateToken(params.Context.Value("token").(string))
+				if err != nil {
+					return nil, err
+				}
+				if !isValid {
+					return nil, gqlerrors.FormatError(errors.New("Token de autorización inválido"))
+				}
+				estado, _ := params.Args["estado"].(string)
+				comentario, _ := params.Args["comentario"].(string)
+				formulario, _ := params.Args["formulario"].(string)
+				usuario, _ := params.Args["usuario"].(string)
+				correoUsuario, _ := params.Args["correoUsuario"].(string)
+				idFormulario, _ := params.Args["idFormulario"].(int)
+
+				return resolvers.CrearEstadoPagoACH(estado, comentario, formulario, usuario, correoUsuario, idFormulario), nil
+			},
+		},
 	}
 	return schemas
 }

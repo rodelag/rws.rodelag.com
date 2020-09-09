@@ -40,7 +40,8 @@ func init() {
 		Name: "Mutation",
 		Fields: graphql.Fields{
 			//Formulario de Pago por ACH
-			"pagoach_crear": PagoACHMutation()["pagoach_crear"],
+			"pagoach_crear":        PagoACHMutation()["pagoach_crear"],
+			"pagoach_crear_estado": PagoACHMutation()["pagoach_crear_estado"],
 			//Formulario de Solicitud de Estado de Cuenta
 			"estadocuenta_crear": EstadoCuentaMutation()["estadocuenta_crear"],
 			//Formulario de Comprobante de Pago

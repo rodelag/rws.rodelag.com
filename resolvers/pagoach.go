@@ -32,8 +32,8 @@ type EstadoPagoACH struct {
 	FechaRegistro,
 	Formulario,
 	Usuario,
-	CorreoUsuario,
-	IDFormulario string
+	CorreoUsuario string
+	IDFormulario int
 }
 
 func configuracion() {
@@ -205,4 +205,27 @@ func CrearPagoACH(nombre string, apellido string, titularCuenta string, cedula s
 	conn.Exec(pagosACH.Nombre, pagosACH.Apellido, pagosACH.TitularCuenta, pagosACH.Cedula, pagosACH.Correo, pagosACH.Telefono, pagosACH.CompraOrigen, pagosACH.NumeroOrden, pagosACH.FotoComprobante, pagosACH.FechaRegistro)
 
 	return pagosACH
+}
+
+func CrearEstadoPagoACH(estado, comentario, formulario, usuario, correoUsuario string, idFormulario int) EstadoPagoACH {
+	estadoPagoACH := EstadoPagoACH{
+		Estado:        estado,
+		Comentario:    comentario,
+		Formulario:    formulario,
+		Usuario:       usuario,
+		CorreoUsuario: correoUsuario,
+		IDFormulario:  idFormulario,
+		FechaRegistro: time.Now().UTC().Format("2006-01-02 15:04:05"),
+	}
+
+	connMySQL := conexion()
+	defer connMySQL.Close()
+
+	conn, err := connMySQL.Prepare("INSERT INTO formulario_estado (estado, comentario, formulario, usuario, correoUsuario, idFormulario, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?)")
+	logError("Problemas al crear el estado en la base de datos: ", err)
+	defer conn.Close()
+
+	conn.Exec(estadoPagoACH.Estado, estadoPagoACH.Comentario, estadoPagoACH.Formulario, estadoPagoACH.Usuario, estadoPagoACH.CorreoUsuario, estadoPagoACH.IDFormulario, estadoPagoACH.FechaRegistro)
+
+	return estadoPagoACH
 }
