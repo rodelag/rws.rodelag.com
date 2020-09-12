@@ -108,7 +108,7 @@ func VerPagoACH(id int) PagoACH {
 		}(),
 	}
 
-	err := connMySQL.QueryRow("SELECT *, (SELECT estado FROM formulario_estado WHERE formulario = 'formulario_pagosach' AND idFormulario = a.id ORDER BY fechaRegistro LIMIT 1) AS estado FROM formulario_pagosach AS a WHERE a.id = ?;", id).Scan(
+	err := connMySQL.QueryRow("SELECT *, (SELECT estado FROM formulario_estado WHERE formulario = 'formulario_pagosach' AND idFormulario = a.id ORDER BY fechaRegistro DESC LIMIT 1) AS estado FROM formulario_pagosach AS a WHERE a.id = ?;", id).Scan(
 		&pagoACH.ID,
 		&pagoACH.Nombre,
 		&pagoACH.Apellido,
@@ -131,7 +131,7 @@ func ListarPagoACH() []PagoACH {
 	connMySQL := conexion()
 	defer connMySQL.Close()
 
-	rows, err := connMySQL.Query("SELECT *, (SELECT estado FROM formulario_estado WHERE formulario = 'formulario_pagosach' ORDER BY fechaRegistro LIMIT 1) AS estado FROM formulario_pagosach;")
+	rows, err := connMySQL.Query("SELECT *, (SELECT estado FROM formulario_estado WHERE formulario = 'formulario_pagosach' ORDER BY fechaRegistro DESC LIMIT 1) AS estado FROM formulario_pagosach;")
 	logError("Problemas al listar los registros de la base de datos: ", err)
 	defer rows.Close()
 
