@@ -195,7 +195,7 @@ func CrearPagoACH(nombre string, apellido string, titularCuenta string, cedula s
 		CompraOrigen:    compraOrigen,
 		NumeroOrden:     numeroOrden,
 		FotoComprobante: fotoComprobante,
-		FechaRegistro:   time.Now().UTC().Format("2006-01-02 15:04:05"),
+		FechaRegistro:   time.Now().Format("2006-01-02 15:04:05"),
 	}
 
 	connMySQL := conexion()
@@ -218,7 +218,7 @@ func CrearEstadoPagoACH(estado, comentario, formulario, usuario, correoUsuario s
 		Usuario:       usuario,
 		CorreoUsuario: correoUsuario,
 		IDFormulario:  idFormulario,
-		FechaRegistro: time.Now().UTC().Format("2006-01-02 15:04:05"),
+		FechaRegistro: time.Now().Format("2006-01-02 15:04:05"),
 	}
 
 	connMySQL := conexion()
