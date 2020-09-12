@@ -108,7 +108,7 @@ func VerPagoACH(id int) PagoACH {
 		}(),
 	}
 
-	err := connMySQL.QueryRow("SELECT *, (SELECT estado FROM formulario_estado WHERE formulario = 'formulario_pagosach' AND idFormulario = ? ORDER BY fechaRegistro LIMIT 1) AS estado FROM formulario_pagosach WHERE id = ?;", id).Scan(
+	err := connMySQL.QueryRow("SELECT *, (SELECT estado FROM formulario_estado WHERE formulario = 'formulario_pagosach' AND idFormulario = a.id ORDER BY fechaRegistro LIMIT 1) AS estado FROM formulario_pagosach AS a WHERE a.id = ?;", id).Scan(
 		&pagoACH.ID,
 		&pagoACH.Nombre,
 		&pagoACH.Apellido,
@@ -119,8 +119,8 @@ func VerPagoACH(id int) PagoACH {
 		&pagoACH.CompraOrigen,
 		&pagoACH.NumeroOrden,
 		&pagoACH.FotoComprobante,
-		&pagoACH.Estado,
 		&pagoACH.FechaRegistro,
+		&pagoACH.Estado,
 	)
 	logError("Problemas al leer registro: ", err)
 
@@ -139,7 +139,7 @@ func ListarPagoACH() []PagoACH {
 	pagosACH := []PagoACH{}
 
 	for rows.Next() {
-		err := rows.Scan(&pagoACH.ID, &pagoACH.Nombre, &pagoACH.Apellido, &pagoACH.TitularCuenta, &pagoACH.Cedula, &pagoACH.Correo, &pagoACH.Telefono, &pagoACH.CompraOrigen, &pagoACH.NumeroOrden, &pagoACH.FotoComprobante, &pagoACH.Estado, &pagoACH.FechaRegistro)
+		err := rows.Scan(&pagoACH.ID, &pagoACH.Nombre, &pagoACH.Apellido, &pagoACH.TitularCuenta, &pagoACH.Cedula, &pagoACH.Correo, &pagoACH.Telefono, &pagoACH.CompraOrigen, &pagoACH.NumeroOrden, &pagoACH.FotoComprobante, &pagoACH.FechaRegistro, &pagoACH.Estado)
 		logError("Problemas leer los datos: ", err)
 		pagosACH = append(pagosACH, PagoACH{
 			ID:              pagoACH.ID,
