@@ -21,6 +21,7 @@ type PagoACH struct {
 	CompraOrigen    string
 	NumeroOrden     string
 	FotoComprobante string
+	Estado          string
 	FechaRegistro   string
 	Estados         []EstadoPagoACH
 }
@@ -107,7 +108,7 @@ func VerPagoACH(id int) PagoACH {
 		}(),
 	}
 
-	err := connMySQL.QueryRow("SELECT * FROM formulario_pagosach WHERE id = ?;", id).Scan(
+	err := connMySQL.QueryRow("SELECT *, (SELECT estado FROM formulario_estado WHERE formulario = 'formulario_pagosach' AND idFormulario = ? ORDER BY fechaRegistro LIMIT 1) AS estado FROM formulario_pagosach WHERE id = ?;", id).Scan(
 		&pagoACH.ID,
 		&pagoACH.Nombre,
 		&pagoACH.Apellido,
@@ -118,6 +119,7 @@ func VerPagoACH(id int) PagoACH {
 		&pagoACH.CompraOrigen,
 		&pagoACH.NumeroOrden,
 		&pagoACH.FotoComprobante,
+		&pagoACH.Estado,
 		&pagoACH.FechaRegistro,
 	)
 	logError("Problemas al leer registro: ", err)
@@ -129,7 +131,7 @@ func ListarPagoACH() []PagoACH {
 	connMySQL := conexion()
 	defer connMySQL.Close()
 
-	rows, err := connMySQL.Query("SELECT * FROM formulario_pagosach;")
+	rows, err := connMySQL.Query("SELECT *, (SELECT estado FROM formulario_estado WHERE formulario = 'formulario_pagosach' ORDER BY fechaRegistro LIMIT 1) AS estado FROM formulario_pagosach;")
 	logError("Problemas al listar los registros de la base de datos: ", err)
 	defer rows.Close()
 
@@ -137,7 +139,7 @@ func ListarPagoACH() []PagoACH {
 	pagosACH := []PagoACH{}
 
 	for rows.Next() {
-		err := rows.Scan(&pagoACH.ID, &pagoACH.Nombre, &pagoACH.Apellido, &pagoACH.TitularCuenta, &pagoACH.Cedula, &pagoACH.Correo, &pagoACH.Telefono, &pagoACH.CompraOrigen, &pagoACH.NumeroOrden, &pagoACH.FotoComprobante, &pagoACH.FechaRegistro)
+		err := rows.Scan(&pagoACH.ID, &pagoACH.Nombre, &pagoACH.Apellido, &pagoACH.TitularCuenta, &pagoACH.Cedula, &pagoACH.Correo, &pagoACH.Telefono, &pagoACH.CompraOrigen, &pagoACH.NumeroOrden, &pagoACH.FotoComprobante, &pagoACH.Estado, &pagoACH.FechaRegistro)
 		logError("Problemas leer los datos: ", err)
 		pagosACH = append(pagosACH, PagoACH{
 			ID:              pagoACH.ID,
@@ -150,6 +152,7 @@ func ListarPagoACH() []PagoACH {
 			CompraOrigen:    pagoACH.CompraOrigen,
 			NumeroOrden:     pagoACH.NumeroOrden,
 			FotoComprobante: pagoACH.FotoComprobante,
+			Estado:          pagoACH.Estado,
 			FechaRegistro:   pagoACH.FechaRegistro,
 			Estados: func() []EstadoPagoACH {
 				consulta := fmt.Sprintf("SELECT * FROM formulario_estado WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_pagosach", pagoACH.ID)
