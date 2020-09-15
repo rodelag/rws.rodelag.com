@@ -119,9 +119,9 @@ func PagoACHMutation() map[string]*graphql.Field {
 				return resolvers.CrearPagoACH(nombre, apellido, titularCuenta, cedula, correo, telefono, compraOrigen, numeroOrden, fotoComprobante), nil
 			},
 		},
-		"pagoach_crear_estado": &graphql.Field{
-			Type:        types.PagoACHEstadoType,
-			Description: "Creación de los estados del pago por ACH",
+		"pagoach_crear_comentario": &graphql.Field{
+			Type:        types.PagoACHComentarioType,
+			Description: "Creación de los comentarios del pago por ACH",
 			Args: graphql.FieldConfigArgument{
 				"estado": &graphql.ArgumentConfig{
 					Type:        graphql.String,
@@ -163,7 +163,7 @@ func PagoACHMutation() map[string]*graphql.Field {
 				correoUsuario, _ := params.Args["correoUsuario"].(string)
 				idFormulario, _ := params.Args["idFormulario"].(int)
 
-				return resolvers.CrearEstadoPagoACH(estado, comentario, formulario, usuario, correoUsuario, idFormulario), nil
+				return resolvers.CrearComentarioPagoACH(estado, comentario, formulario, usuario, correoUsuario, idFormulario), nil
 			},
 		},
 	}

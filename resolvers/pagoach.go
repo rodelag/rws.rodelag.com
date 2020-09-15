@@ -23,10 +23,10 @@ type PagoACH struct {
 	FotoComprobante string
 	Estado          string
 	FechaRegistro   string
-	Estados         []EstadoPagoACH
+	Comentarios     []ComentarioPagoACH
 }
 
-type EstadoPagoACH struct {
+type ComentarioPagoACH struct {
 	ID,
 	Estado,
 	Comentario,
@@ -81,34 +81,34 @@ func VerPagoACH(id int) PagoACH {
 	defer connMySQL.Close()
 
 	pagoACH := PagoACH{
-		Estados: func() []EstadoPagoACH {
-			consulta := fmt.Sprintf("SELECT * FROM formulario_estado WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_pagosach", id)
+		Comentarios: func() []ComentarioPagoACH {
+			consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_pagosach", id)
 
 			rows, err := connMySQL.Query(consulta)
-			logError("Problemas al listar los estados de los registros de la base de datos: ", err)
+			logError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
 			defer rows.Close()
 
-			estado, estados := EstadoPagoACH{}, []EstadoPagoACH{}
+			comentario, comentarios := ComentarioPagoACH{}, []ComentarioPagoACH{}
 
 			for rows.Next() {
-				err := rows.Scan(&estado.ID, &estado.Estado, &estado.Comentario, &estado.FechaRegistro, &estado.Formulario, &estado.Usuario, &estado.CorreoUsuario, &estado.IDFormulario)
+				err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
 				logError("Problemas leer los estados: ", err)
-				estados = append(estados, EstadoPagoACH{
-					ID:            estado.ID,
-					Estado:        estado.Estado,
-					Comentario:    estado.Comentario,
-					FechaRegistro: estado.FechaRegistro,
-					Formulario:    estado.Formulario,
-					Usuario:       estado.Usuario,
-					CorreoUsuario: estado.CorreoUsuario,
-					IDFormulario:  estado.IDFormulario,
+				comentarios = append(comentarios, ComentarioPagoACH{
+					ID:            comentario.ID,
+					Estado:        comentario.Estado,
+					Comentario:    comentario.Comentario,
+					FechaRegistro: comentario.FechaRegistro,
+					Formulario:    comentario.Formulario,
+					Usuario:       comentario.Usuario,
+					CorreoUsuario: comentario.CorreoUsuario,
+					IDFormulario:  comentario.IDFormulario,
 				})
 			}
-			return estados
+			return comentarios
 		}(),
 	}
 
-	err := connMySQL.QueryRow("SELECT *, IFNULL((SELECT estado FROM formulario_estado WHERE formulario = 'formulario_pagosach' AND idFormulario = a.id ORDER BY fechaRegistro DESC LIMIT 1), 'pendiente') AS estado FROM formulario_pagosach AS a WHERE a.id = ?;", id).Scan(
+	err := connMySQL.QueryRow("SELECT *, IFNULL((SELECT estado FROM formulario_comentarios WHERE formulario = 'formulario_pagosach' AND idFormulario = a.id ORDER BY fechaRegistro DESC LIMIT 1), 'pendiente') AS estado FROM formulario_pagosach AS a WHERE a.id = ?;", id).Scan(
 		&pagoACH.ID,
 		&pagoACH.Nombre,
 		&pagoACH.Apellido,
@@ -131,7 +131,7 @@ func ListarPagoACH() []PagoACH {
 	connMySQL := conexion()
 	defer connMySQL.Close()
 
-	rows, err := connMySQL.Query("SELECT a.*, IFNULL((SELECT estado FROM formulario_estado WHERE formulario = 'formulario_pagosach' AND idFormulario = a.id ORDER BY fechaRegistro DESC LIMIT 1), 'pendiente') AS estado FROM formulario_pagosach AS a;")
+	rows, err := connMySQL.Query("SELECT a.*, IFNULL((SELECT estado FROM formulario_comentarios WHERE formulario = 'formulario_pagosach' AND idFormulario = a.id ORDER BY fechaRegistro DESC LIMIT 1), 'pendiente') AS estado FROM formulario_pagosach AS a;")
 	logError("Problemas al listar los registros de la base de datos: ", err)
 	defer rows.Close()
 
@@ -154,30 +154,30 @@ func ListarPagoACH() []PagoACH {
 			FotoComprobante: pagoACH.FotoComprobante,
 			Estado:          pagoACH.Estado,
 			FechaRegistro:   pagoACH.FechaRegistro,
-			Estados: func() []EstadoPagoACH {
-				consulta := fmt.Sprintf("SELECT * FROM formulario_estado WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_pagosach", pagoACH.ID)
+			Comentarios: func() []ComentarioPagoACH {
+				consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_pagosach", pagoACH.ID)
 
 				rows, err := connMySQL.Query(consulta)
-				logError("Problemas al listar los estados de los registros de la base de datos: ", err)
+				logError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
 				defer rows.Close()
 
-				estado, estados := EstadoPagoACH{}, []EstadoPagoACH{}
+				comentario, comentarios := ComentarioPagoACH{}, []ComentarioPagoACH{}
 
 				for rows.Next() {
-					err := rows.Scan(&estado.ID, &estado.Estado, &estado.Comentario, &estado.FechaRegistro, &estado.Formulario, &estado.Usuario, &estado.CorreoUsuario, &estado.IDFormulario)
+					err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
 					logError("Problemas leer los estados: ", err)
-					estados = append(estados, EstadoPagoACH{
-						ID:            estado.ID,
-						Estado:        estado.Estado,
-						Comentario:    estado.Comentario,
-						FechaRegistro: estado.FechaRegistro,
-						Formulario:    estado.Formulario,
-						Usuario:       estado.Usuario,
-						CorreoUsuario: estado.CorreoUsuario,
-						IDFormulario:  estado.IDFormulario,
+					comentarios = append(comentarios, ComentarioPagoACH{
+						ID:            comentario.ID,
+						Estado:        comentario.Estado,
+						Comentario:    comentario.Comentario,
+						FechaRegistro: comentario.FechaRegistro,
+						Formulario:    comentario.Formulario,
+						Usuario:       comentario.Usuario,
+						CorreoUsuario: comentario.CorreoUsuario,
+						IDFormulario:  comentario.IDFormulario,
 					})
 				}
-				return estados
+				return comentarios
 			}(),
 		})
 	}
@@ -210,8 +210,8 @@ func CrearPagoACH(nombre string, apellido string, titularCuenta string, cedula s
 	return pagosACH
 }
 
-func CrearEstadoPagoACH(estado, comentario, formulario, usuario, correoUsuario string, idFormulario int) EstadoPagoACH {
-	estadoPagoACH := EstadoPagoACH{
+func CrearComentarioPagoACH(estado, comentario, formulario, usuario, correoUsuario string, idFormulario int) ComentarioPagoACH {
+	comentarioPagoACH := ComentarioPagoACH{
 		Estado:        estado,
 		Comentario:    comentario,
 		Formulario:    formulario,
@@ -224,11 +224,11 @@ func CrearEstadoPagoACH(estado, comentario, formulario, usuario, correoUsuario s
 	connMySQL := conexion()
 	defer connMySQL.Close()
 
-	conn, err := connMySQL.Prepare("INSERT INTO formulario_estado (estado, comentario, formulario, usuario, correoUsuario, idFormulario, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?)")
+	conn, err := connMySQL.Prepare("INSERT INTO formulario_comentarios (estado, comentario, formulario, usuario, correoUsuario, idFormulario, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?)")
 	logError("Problemas al crear el estado en la base de datos: ", err)
 	defer conn.Close()
 
-	conn.Exec(estadoPagoACH.Estado, estadoPagoACH.Comentario, estadoPagoACH.Formulario, estadoPagoACH.Usuario, estadoPagoACH.CorreoUsuario, estadoPagoACH.IDFormulario, estadoPagoACH.FechaRegistro)
+	conn.Exec(comentarioPagoACH.Estado, comentarioPagoACH.Comentario, comentarioPagoACH.Formulario, comentarioPagoACH.Usuario, comentarioPagoACH.CorreoUsuario, comentarioPagoACH.IDFormulario, comentarioPagoACH.FechaRegistro)
 
-	return estadoPagoACH
+	return comentarioPagoACH
 }

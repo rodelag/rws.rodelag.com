@@ -2,9 +2,9 @@ package types
 
 import "github.com/graphql-go/graphql"
 
-var PagoACHEstadoType = graphql.NewObject(graphql.ObjectConfig{
-	Name:        "PagoACHEstado",
-	Description: "Estado del registro",
+var PagoACHComentarioType = graphql.NewObject(graphql.ObjectConfig{
+	Name:        "PagoACHComentarios",
+	Description: "Comentario de registro",
 	Fields: graphql.Fields{
 		"id": &graphql.Field{
 			Type:        graphql.Int,
@@ -93,9 +93,9 @@ var PagoACHType = graphql.NewObject(graphql.ObjectConfig{
 			Type:        graphql.String,
 			Description: "Fecha del registro",
 		},
-		"estados": &graphql.Field{
-			Type:        graphql.NewList(PagoACHEstadoType),
-			Description: "Estado del registro",
+		"comentarios": &graphql.Field{
+			Type:        graphql.NewList(PagoACHComentarioType),
+			Description: "Comentarios del registro",
 		},
 	},
 })
