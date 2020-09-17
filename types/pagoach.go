@@ -4,7 +4,7 @@ import "github.com/graphql-go/graphql"
 
 var PagoACHComentarioType = graphql.NewObject(graphql.ObjectConfig{
 	Name:        "PagoACHComentarios",
-	Description: "Comentario de registro",
+	Description: "Comentario de registro para los pagos por ACH",
 	Fields: graphql.Fields{
 		"id": &graphql.Field{
 			Type:        graphql.Int,
