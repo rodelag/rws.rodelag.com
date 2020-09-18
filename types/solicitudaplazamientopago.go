@@ -105,6 +105,22 @@ var SolicitudAplazamientoPagoType = graphql.NewObject(graphql.ObjectConfig{
 			Type:        graphql.String,
 			Description: "Carta del motivo",
 		},
+		"gestion": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Manejo o Gestion del agente con el registro",
+		},
+		"estadoCuenta": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Estado de cuenta del cliente",
+		},
+		"acp": &graphql.Field{
+			Type:        graphql.String,
+			Description: "ACP del cliente",
+		},
+		"propuesta": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Propuesta que se aplica al cliente, gestionado por el agente",
+		},
 		"estado": &graphql.Field{
 			Type:        graphql.String,
 			Description: "Estado del registro",

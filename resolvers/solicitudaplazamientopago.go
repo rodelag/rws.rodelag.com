@@ -255,6 +255,27 @@ func CrearSolicitudAplazamientoPago(nombre, apellido, correo, telefonoCasa, celu
 	return sap
 }
 
+func ModificarSolicitudAplazamientoPago(gestion, estadoCuenta, acp, propuesta string, id int) SolicitudAplazamientoPago {
+	sap := SolicitudAplazamientoPago{
+		ID:           id,
+		Gestion:      gestion,
+		EstadoCuenta: estadoCuenta,
+		APC:          acp,
+		Propuesta:    propuesta,
+	}
+
+	connMySQL := conexionSolicitudAplazamientoPago()
+	defer connMySQL.Close()
+
+	conn, err := connMySQL.Prepare("UPDATE formulario_aplazamientopago SET gestion = ?, estadoCuenta = ?, acp = ?, propuesta = ? WHERE id = ?")
+	utils.LogError("Problemas al modificar el registro en la base de datos: ", err)
+	defer conn.Close()
+
+	conn.Exec(sap.Gestion, sap.EstadoCuenta, sap.APC, sap.Propuesta, sap.ID)
+
+	return sap
+}
+
 func CrearComentarioSolicitudAplazamientoPago(estado, comentario, formulario, usuario, correoUsuario string, idFormulario int) ComentarioSolicitudAplazamientoPago {
 	c := ComentarioSolicitudAplazamientoPago{
 		Estado:        estado,

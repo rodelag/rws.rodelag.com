@@ -159,6 +159,57 @@ func SolicitudAplazamientoPagoMutation() map[string]*graphql.Field {
 				), nil
 			},
 		},
+		"solicitudaplazamientopago_modificar": &graphql.Field{
+			Type:        types.SolicitudAplazamientoPagoType,
+			Description: "Modificación de Solicitud de Aplazamiento de Pagos por la Crisis del COVID-19",
+			Args: graphql.FieldConfigArgument{
+				"gestion": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Manejo o Gestion del agente con el registro",
+				},
+				"estadoCuenta": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Estado de cuenta del cliente",
+				},
+				"acp": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "ACP del cliente",
+				},
+				"propuesta": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Propuesta que se aplica al cliente, gestionado por el agente",
+				},
+				"id": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "id del registro",
+				},
+			},
+			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
+				_, isValid, err := auth.ValidateToken(params.Context.Value("token").(string))
+				if err != nil {
+					return nil, err
+				}
+				if !isValid {
+					return nil, gqlerrors.FormatError(errors.New("Token de autorización inválido"))
+				}
+
+				if id, ok := params.Args["id"].(int); ok {
+					gestion, _ := params.Args["gestion"].(string)
+					estadoCuenta, _ := params.Args["estadoCuenta"].(string)
+					acp, _ := params.Args["acp"].(string)
+					propuesta, _ := params.Args["propuesta"].(string)
+
+					return resolvers.ModificarSolicitudAplazamientoPago(
+						gestion,
+						estadoCuenta,
+						acp,
+						propuesta,
+						id,
+					), nil
+				}
+				return nil, nil
+			},
+		},
 		"solicitudaplazamientopago_crear_comentario": &graphql.Field{
 			Type:        types.SolicitudAplazamientoPagoComentarioType,
 			Description: "Creación de comentario de la solicitud de aplazamiento de pago",

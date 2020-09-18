@@ -66,6 +66,7 @@ func init() {
 
 			//Formulario de Solicitud de Aplazamiento de Pagos por la Crisis del COVID-19
 			"solicitudaplazamientopago_crear":            SolicitudAplazamientoPagoMutation()["solicitudaplazamientopago_crear"],
+			"solicitudaplazamientopago_modificar":        SolicitudAplazamientoPagoMutation()["solicitudaplazamientopago_modificar"],
 			"solicitudaplazamientopago_crear_comentario": SolicitudAplazamientoPagoMutation()["solicitudaplazamientopago_crear_comentario"],
 
 			//Formulario de Prevención de Fraude
