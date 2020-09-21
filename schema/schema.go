@@ -2,6 +2,8 @@ package schema
 
 import (
 	"github.com/graphql-go/graphql"
+	"rws/schema/formularios"
+	"rws/schema/proveedores"
 )
 
 var Schema graphql.Schema
@@ -11,41 +13,44 @@ func init() {
 		Name: "Query",
 		Fields: graphql.Fields{
 			//Formulario de Pago por ACH
-			"pagoach_ver":    PagoACHQuery()["pagoach_ver"],
-			"pagoach_listar": PagoACHQuery()["pagoach_listar"],
+			"pagoach_ver":    formularios.PagoACHQuery()["pagoach_ver"],
+			"pagoach_listar": formularios.PagoACHQuery()["pagoach_listar"],
 
 			//Formulario de Solicitud de Estado de Cuenta
-			"estadocuenta_ver":    EstadoCuentaQuery()["estadocuenta_ver"],
-			"estadocuenta_listar": EstadoCuentaQuery()["estadocuenta_listar"],
+			"estadocuenta_ver":    formularios.EstadoCuentaQuery()["estadocuenta_ver"],
+			"estadocuenta_listar": formularios.EstadoCuentaQuery()["estadocuenta_listar"],
 
 			//Formulario de Comprobante de Pago
-			"comprobantepago_ver":    ComprobantePagoQuery()["comprobantepago_ver"],
-			"comprobantepago_listar": ComprobantePagoQuery()["comprobantepago_listar"],
+			"comprobantepago_ver":    formularios.ComprobantePagoQuery()["comprobantepago_ver"],
+			"comprobantepago_listar": formularios.ComprobantePagoQuery()["comprobantepago_listar"],
 
 			//Formulario de Solicitud de Aplazamiento de Pagos por la Crisis del COVID-19
-			"solicitudaplazamientopago_ver":    SolicitudAplazamientoPagoQuery()["solicitudaplazamientopago_ver"],
-			"solicitudaplazamientopago_listar": SolicitudAplazamientoPagoQuery()["solicitudaplazamientopago_listar"],
+			"solicitudaplazamientopago_ver":    formularios.SolicitudAplazamientoPagoQuery()["solicitudaplazamientopago_ver"],
+			"solicitudaplazamientopago_listar": formularios.SolicitudAplazamientoPagoQuery()["solicitudaplazamientopago_listar"],
 
 			//Formulario de Prevención de Fraude
-			"prevencionfraude_listar": PrevencionFraudeQuery()["prevencionfraude_listar"],
+			"prevencionfraude_listar": formularios.PrevencionFraudeQuery()["prevencionfraude_listar"],
 
 			//Formulario de Solicitud Tarjeta Rodelag
-			"solicitudtarjetarodelag_listar": SolicitudTarjetaRodelagQuery()["solicitudtarjetarodelag_listar"],
+			"solicitudtarjetarodelag_listar": formularios.SolicitudTarjetaRodelagQuery()["solicitudtarjetarodelag_listar"],
 
 			//Formulario de Reclamo
-			"reclamo_listar": ReclamoQuery()["reclamo_listar"],
+			"reclamo_listar": formularios.ReclamoQuery()["reclamo_listar"],
 
 			//Formulario de Notificación Descuento
-			"notificaciondescuento_listar": NotificacionDescuentoQuery()["notificaciondescuento_listar"],
+			"notificaciondescuento_listar": formularios.NotificacionDescuentoQuery()["notificaciondescuento_listar"],
 
 			//Formulario de Contáctenos
-			"contactenos_listar": ContactenosQuery()["contactenos_listar"],
+			"contactenos_listar": formularios.ContactenosQuery()["contactenos_listar"],
 
 			//Formulario de Contáctenos de ventas comerciales
-			"contactenosvc_listar": ContactenosVCQuery()["contactenosvc_listar"],
+			"contactenosvc_listar": formularios.ContactenosVCQuery()["contactenosvc_listar"],
 
 			//Encuesta de Satisfacción Instalación AA
-			"esiaa_listar": EsiaaQuery()["esiaa_listar"],
+			"esiaa_listar": formularios.EsiaaQuery()["esiaa_listar"],
+
+			//Inventario de los proveedores
+			"proveedor_inventario_listar": proveedores.ProveedoreInventarioQuery()["proveedor_inventario_listar"],
 		},
 	})
 
@@ -53,42 +58,42 @@ func init() {
 		Name: "Mutation",
 		Fields: graphql.Fields{
 			//Formulario de Pago por ACH
-			"pagoach_crear":            PagoACHMutation()["pagoach_crear"],
-			"pagoach_crear_comentario": PagoACHMutation()["pagoach_crear_comentario"],
+			"pagoach_crear":            formularios.PagoACHMutation()["pagoach_crear"],
+			"pagoach_crear_comentario": formularios.PagoACHMutation()["pagoach_crear_comentario"],
 
 			//Formulario de Solicitud de Estado de Cuenta
-			"estadocuenta_crear":            EstadoCuentaMutation()["estadocuenta_crear"],
-			"estadocuenta_crear_comentario": EstadoCuentaMutation()["estadocuenta_crear_comentario"],
+			"estadocuenta_crear":            formularios.EstadoCuentaMutation()["estadocuenta_crear"],
+			"estadocuenta_crear_comentario": formularios.EstadoCuentaMutation()["estadocuenta_crear_comentario"],
 
 			//Formulario de Comprobante de Pago
-			"comprobantepago_crear":            ComprobantePagoMutation()["comprobantepago_crear"],
-			"comprobantepago_crear_comentario": ComprobantePagoMutation()["comprobantepago_crear_comentario"],
+			"comprobantepago_crear":            formularios.ComprobantePagoMutation()["comprobantepago_crear"],
+			"comprobantepago_crear_comentario": formularios.ComprobantePagoMutation()["comprobantepago_crear_comentario"],
 
 			//Formulario de Solicitud de Aplazamiento de Pagos por la Crisis del COVID-19
-			"solicitudaplazamientopago_crear":            SolicitudAplazamientoPagoMutation()["solicitudaplazamientopago_crear"],
-			"solicitudaplazamientopago_modificar":        SolicitudAplazamientoPagoMutation()["solicitudaplazamientopago_modificar"],
-			"solicitudaplazamientopago_crear_comentario": SolicitudAplazamientoPagoMutation()["solicitudaplazamientopago_crear_comentario"],
+			"solicitudaplazamientopago_crear":            formularios.SolicitudAplazamientoPagoMutation()["solicitudaplazamientopago_crear"],
+			"solicitudaplazamientopago_modificar":        formularios.SolicitudAplazamientoPagoMutation()["solicitudaplazamientopago_modificar"],
+			"solicitudaplazamientopago_crear_comentario": formularios.SolicitudAplazamientoPagoMutation()["solicitudaplazamientopago_crear_comentario"],
 
 			//Formulario de Prevención de Fraude
-			"prevencionfraude_crear": PrevencionFraudeMutation()["prevencionfraude_crear"],
+			"prevencionfraude_crear": formularios.PrevencionFraudeMutation()["prevencionfraude_crear"],
 
 			//Formulario de Solicitud Tarjeta Rodelag
-			"solicitudtarjetarodelag_crear": SolicitudTarjetaRodelagMutation()["solicitudtarjetarodelag_crear"],
+			"solicitudtarjetarodelag_crear": formularios.SolicitudTarjetaRodelagMutation()["solicitudtarjetarodelag_crear"],
 
 			//Formulario de Reclamo
-			"reclamo_crear": ReclamoMutation()["reclamo_crear"],
+			"reclamo_crear": formularios.ReclamoMutation()["reclamo_crear"],
 
 			//Formulario de Notificación Descuento
-			"notificaciondescuento_crear": NotificacionDescuentoMutation()["notificaciondescuento_crear"],
+			"notificaciondescuento_crear": formularios.NotificacionDescuentoMutation()["notificaciondescuento_crear"],
 
 			//Formulario de Contáctenos
-			"contactenos_crear": ContactenosMutation()["contactenos_crear"],
+			"contactenos_crear": formularios.ContactenosMutation()["contactenos_crear"],
 
 			//Formulario de Contáctenos de ventas comerciales
-			"contactenosvc_crear": ContactenosVCMutation()["contactenosvc_crear"],
+			"contactenosvc_crear": formularios.ContactenosVCMutation()["contactenosvc_crear"],
 
 			//Encuesta de Satisfacción Instalación AA
-			"esiaa_crear": EsiaaMutation()["esiaa_crear"],
+			"esiaa_crear": formularios.EsiaaMutation()["esiaa_crear"],
 		},
 	})
 
