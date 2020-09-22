@@ -3,26 +3,17 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/graphql-go/graphql"
 	"github.com/spf13/viper"
 	"io/ioutil"
 	"net/http"
 	"rws/schema"
+	"rws/utils"
 	"strings"
 )
 
-func configuracion() {
-	viper.SetConfigName("configuracion")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
-	if err := viper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("Fatal error config file: %s \n", err))
-	}
-}
-
 func main() {
-	configuracion()
+	utils.Configuracion()
 	http.HandleFunc("/", graphqlHandler)
 	http.ListenAndServe(":"+viper.GetString("puerto"), nil)
 }
