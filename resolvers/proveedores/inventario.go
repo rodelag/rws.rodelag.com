@@ -10,7 +10,7 @@ import (
 )
 
 type ProveedorInventario struct {
-	Consecutivo int
+	Consecutivo,
 	NomSuc,
 	Depto,
 	Categ,
@@ -44,11 +44,11 @@ func conexionProveedorInventario() *sql.DB {
 	return connMySQL
 }
 
-func ListarProveedorInventario(sucursal, proveedor, proveedorID, campo, condicion string) []ProveedorInventario {
+func ListarProveedorInventario(sucursal, proveedor, proveedorID, campo, condicion string, cursor, limite int) []ProveedorInventario {
 	connMySQL := conexionProveedorInventario()
 	defer connMySQL.Close()
 
-	rows, err := connMySQL.Query(consulta(sucursal, proveedor, proveedorID, campo, condicion))
+	rows, err := connMySQL.Query(consulta(sucursal, proveedor, proveedorID, campo, condicion, cursor, limite))
 	utils.LogError("Problemas al listar los registros de la base de datos: ", err)
 	defer rows.Close()
 
@@ -81,10 +81,10 @@ func ListarProveedorInventario(sucursal, proveedor, proveedorID, campo, condicio
 }
 
 //Esta función más adelante puede cambiarse por un llamado a una API
-func consulta(sucursal, proveedor, proveedorID, campo, condicion string) string {
+func consulta(sucursal, proveedor, proveedorID, campo, condicion string, cursor, limite int) string {
 	consulta := `
 		SELECT
-			(@row_number := @row_number + 1) AS Consecutivo,
+			@cursor AS Consecutivo,
 			b.Sucursal AS NomSuc,
 			a.Category AS Depto,
 			a.Category_L2 AS Categ,
@@ -102,7 +102,7 @@ func consulta(sucursal, proveedor, proveedorID, campo, condicion string) string 
 			p3.Codigo_Inportacion AS ProvID,
 			0 AS CategID
 		FROM
-			(SELECT @row_number := 0) cnsc
+			(SELECT @cursor := 0) c
 			JOIN products AS a
 				INNER JOIN products_mview_instock_actualizado AS b
 						   ON a.id = b.Item
@@ -116,6 +116,12 @@ func consulta(sucursal, proveedor, proveedorID, campo, condicion string) string 
 				%s LIKE '%s'
 		  AND
 				%s LIKE '%s'
+          AND
+                (@cursor := @cursor + 1) > %d LIMIT %d
 	`
-	return fmt.Sprintf(consulta, sucursal, proveedor, proveedorID, campo, condicion)
+	if limite == 0 {
+		limite = 20
+	}
+
+	return fmt.Sprintf(consulta, sucursal, proveedor, proveedorID, campo, condicion, cursor, limite)
 }

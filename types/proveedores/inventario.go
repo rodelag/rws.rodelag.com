@@ -8,7 +8,7 @@ var ProveedorInventarioType = graphql.NewObject(graphql.ObjectConfig{
 	Fields: graphql.Fields{
 		"consecutivo": &graphql.Field{
 			Type:        graphql.String,
-			Description: "Consecutivo para cada registro",
+			Description: "Cursor para identificar cada registro, id único y secuencial",
 		},
 		"nomSuc": &graphql.Field{
 			Type:        graphql.String,

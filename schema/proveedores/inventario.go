@@ -35,6 +35,14 @@ func ProveedoreInventarioQuery() map[string]*graphql.Field {
 					Type:        graphql.String,
 					Description: "Condición para el campo secundaria",
 				},
+				"cursor": &graphql.ArgumentConfig{
+					Type:        graphql.Int,
+					Description: "Cursor para identificar cada registro, id único y secuencial",
+				},
+				"limite": &graphql.ArgumentConfig{
+					Type:        graphql.Int,
+					Description: "Limite de los registros que se traen",
+				},
 			},
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				_, isValid, err := auth.ValidateToken(p.Context.Value("token").(string))
@@ -51,7 +59,10 @@ func ProveedoreInventarioQuery() map[string]*graphql.Field {
 				campo, _ := p.Args["campo"].(string)
 				condicion, _ := p.Args["condicion"].(string)
 
-				return resolvers.ListarProveedorInventario(sucursal, proveedor, proveedorID, campo, condicion), nil
+				cursor, _ := p.Args["cursor"].(int)
+				limite, _ := p.Args["limite"].(int)
+
+				return resolvers.ListarProveedorInventario(sucursal, proveedor, proveedorID, campo, condicion, cursor, limite), nil
 			},
 		},
 	}
