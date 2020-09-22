@@ -35,6 +35,14 @@ func ProveedoreInventarioQuery() map[string]*graphql.Field {
 					Type:        graphql.String,
 					Description: "Condición para el campo secundaria",
 				},
+				"campo2": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Campo o columna secundaria",
+				},
+				"condicion2": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Condición para el campo secundaria",
+				},
 				"cursor": &graphql.ArgumentConfig{
 					Type:        graphql.Int,
 					Description: "Cursor para identificar cada registro, id único y secuencial",
@@ -58,11 +66,13 @@ func ProveedoreInventarioQuery() map[string]*graphql.Field {
 				proveedorID, _ := p.Args["proveedorID"].(string)
 				campo, _ := p.Args["campo"].(string)
 				condicion, _ := p.Args["condicion"].(string)
+				campo2, _ := p.Args["campo2"].(string)
+				condicion2, _ := p.Args["condicion2"].(string)
 
 				cursor, _ := p.Args["cursor"].(int)
 				limite, _ := p.Args["limite"].(int)
 
-				return resolvers.ListarProveedorInventario(sucursal, proveedor, proveedorID, campo, condicion, cursor, limite), nil
+				return resolvers.ListarProveedorInventario(sucursal, proveedor, proveedorID, campo, condicion, campo2, condicion2, cursor, limite), nil
 			},
 		},
 	}
