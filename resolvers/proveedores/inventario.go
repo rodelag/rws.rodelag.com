@@ -134,7 +134,7 @@ func consulta(sucursal, proveedor, proveedorID, campo, condicion, campo2, condic
 					 WHERE
 							b.instock > 0
 					  AND
-							b.Sucursal = '%s'
+							b.Sucursal LIKE '%s'
 					  AND
 							%s LIKE '%s'
 					  AND
@@ -170,7 +170,7 @@ func consulta(sucursal, proveedor, proveedorID, campo, condicion, campo2, condic
 					 WHERE
 							b.instock > 0
 					  AND
-							b.Sucursal = '%s'
+							b.Sucursal LIKE '%s'
 					  AND
 							%s LIKE '%s'
 					  AND
@@ -215,7 +215,7 @@ func consulta(sucursal, proveedor, proveedorID, campo, condicion, campo2, condic
 			WHERE
 					b.instock > 0
 			  AND
-					b.Sucursal = '%s'
+					b.Sucursal LIKE '%s'
 			  AND
 					%s LIKE '%s'
 			  AND
