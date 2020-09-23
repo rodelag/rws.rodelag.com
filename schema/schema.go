@@ -4,6 +4,7 @@ import (
 	"github.com/graphql-go/graphql"
 	"rws/schema/formularios"
 	"rws/schema/proveedores"
+	"rws/schema/reportes_elconix"
 )
 
 var Schema graphql.Schema
@@ -51,6 +52,9 @@ func init() {
 
 			//Inventario de los proveedores
 			"proveedor_inventario_listar": proveedores.ProveedoreInventarioQuery()["proveedor_inventario_listar"],
+
+			//Inventario de las sucursales / Bodegas
+			"reporte_eis_listar": reportes_elconix.InventarioSucursalQuery()["reporte_eis_listar"],
 		},
 	})
 
