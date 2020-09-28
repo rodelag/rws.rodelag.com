@@ -27,7 +27,7 @@ type SolicitudAplazamientoPago struct {
 	CartaMotivo,
 	Gestion,
 	EstadoCuenta,
-	APC,
+	Acp,
 	Propuesta,
 	Estado,
 	FechaRegistro string
@@ -110,13 +110,12 @@ func VerSolicitudAplazamientoPago(id int) SolicitudAplazamientoPago {
 		&sap.CartaMotivo,
 		&sap.Gestion,
 		&sap.EstadoCuenta,
-		&sap.APC,
+		&sap.Acp,
 		&sap.Propuesta,
 		&sap.FechaRegistro,
 		&sap.Estado,
 	)
 	utils.LogError("Problemas al leer registro: ", err)
-
 	return sap
 }
 
@@ -150,7 +149,7 @@ func ListarSolicitudAplazamientoPago() []SolicitudAplazamientoPago {
 			&sap.CartaMotivo,
 			&sap.Gestion,
 			&sap.EstadoCuenta,
-			&sap.APC,
+			&sap.Acp,
 			&sap.Propuesta,
 			&sap.FechaRegistro,
 			&sap.Estado,
@@ -172,12 +171,12 @@ func ListarSolicitudAplazamientoPago() []SolicitudAplazamientoPago {
 			Cedula:                 sap.Cedula,
 			Talonario:              sap.Talonario,
 			CartaMotivo:            sap.CartaMotivo,
-			Estado:                 sap.Estado,
 			Gestion:                sap.Gestion,
 			EstadoCuenta:           sap.EstadoCuenta,
-			APC:                    sap.APC,
+			Acp:                    sap.Acp,
 			Propuesta:              sap.Propuesta,
 			FechaRegistro:          sap.FechaRegistro,
+			Estado:                 sap.Estado,
 			Comentarios: func() []ComentarioSolicitudAplazamientoPago {
 				consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_aplazamientopago", sap.ID)
 
@@ -260,7 +259,7 @@ func ModificarSolicitudAplazamientoPago(gestion, estadoCuenta, acp, propuesta st
 		ID:           id,
 		Gestion:      gestion,
 		EstadoCuenta: estadoCuenta,
-		APC:          acp,
+		Acp:          acp,
 		Propuesta:    propuesta,
 	}
 
@@ -271,7 +270,7 @@ func ModificarSolicitudAplazamientoPago(gestion, estadoCuenta, acp, propuesta st
 	utils.LogError("Problemas al modificar el registro en la base de datos: ", err)
 	defer conn.Close()
 
-	conn.Exec(sap.Gestion, sap.EstadoCuenta, sap.APC, sap.Propuesta, sap.ID)
+	conn.Exec(sap.Gestion, sap.EstadoCuenta, sap.Acp, sap.Propuesta, sap.ID)
 
 	return sap
 }

@@ -186,6 +186,7 @@ func consulta(sucursal, proveedor, proveedorID, campo, condicion, campo2, condic
 		return fmt.Sprintf(consulta, sucursal, proveedor, proveedorID, campo, condicion, cursor, limite, sucursal, campo, condicion, campo2, condicion2, cursor, limite)
 	} else {
 		// INFO: Esta consulta es para los usuarios que son proveedores.
+		fmt.Println("test")
 		consulta = `
 			SELECT
 				@cursor AS Consecutivo,
