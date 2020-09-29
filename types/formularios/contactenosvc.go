@@ -2,6 +2,45 @@ package formularios
 
 import "github.com/graphql-go/graphql"
 
+var ContactenosVCComentarioType = graphql.NewObject(graphql.ObjectConfig{
+	Name:        "ContactenosVCComentarios",
+	Description: "Comentario de registro para contáctenos ventas comerciales",
+	Fields: graphql.Fields{
+		"id": &graphql.Field{
+			Type:        graphql.Int,
+			Description: "ID del estado",
+		},
+		"estado": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Estado del registro",
+		},
+		"comentario": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Comentario del agente para con el registro",
+		},
+		"fechaRegistro": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Fecha de creación del estado",
+		},
+		"formulario": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Formulario al que pertenece el estado",
+		},
+		"usuario": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Usuario que gestiona el registro",
+		},
+		"correoUsuario": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Correo del usuario que gestiona el registro",
+		},
+		"idFormulario": &graphql.Field{
+			Type:        graphql.Int,
+			Description: "ID del registro",
+		},
+	},
+})
+
 var ContactenosVCType = graphql.NewObject(graphql.ObjectConfig{
 	Name:        "ContactenosVC",
 	Description: "Contáctenos de ventas comerciales",
@@ -38,9 +77,17 @@ var ContactenosVCType = graphql.NewObject(graphql.ObjectConfig{
 			Type:        graphql.String,
 			Description: "Detalle de solicitud o cotización.",
 		},
+		"estado": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Estado del registro",
+		},
 		"fechaRegistro": &graphql.Field{
 			Type:        graphql.String,
 			Description: "Fecha del registro",
+		},
+		"comentarios": &graphql.Field{
+			Type:        graphql.NewList(ContactenosVCComentarioType),
+			Description: "Comentarios del registro",
 		},
 	},
 })

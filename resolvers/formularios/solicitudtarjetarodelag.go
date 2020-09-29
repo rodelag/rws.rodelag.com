@@ -47,7 +47,20 @@ type SolicitudTarjetaRodelag struct {
 	TelefonoReferenciaDos,
 	NombreReferenciaTres,
 	TelefonoReferenciaTres,
+	Estado,
 	FechaRegistro string
+	Comentarios []ComentarioSolicitudTarjetaRodelag
+}
+
+type ComentarioSolicitudTarjetaRodelag struct {
+	ID,
+	Estado,
+	Comentario,
+	FechaRegistro,
+	Formulario,
+	Usuario,
+	CorreoUsuario string
+	IDFormulario int
 }
 
 func conexionSolicitudTarjetaRodelag() *sql.DB {
@@ -65,11 +78,89 @@ func conexionSolicitudTarjetaRodelag() *sql.DB {
 	return connMySQL
 }
 
+func VerSolicitudTarjetaRodelag(id int) SolicitudTarjetaRodelag {
+	connMySQL := conexionSolicitudTarjetaRodelag()
+	defer connMySQL.Close()
+
+	reg := SolicitudTarjetaRodelag{
+		Comentarios: func() []ComentarioSolicitudTarjetaRodelag {
+			consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_solicitudtarjeta", id)
+
+			rows, err := connMySQL.Query(consulta)
+			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+			defer rows.Close()
+
+			comentario, comentarios := ComentarioSolicitudTarjetaRodelag{}, []ComentarioSolicitudTarjetaRodelag{}
+
+			for rows.Next() {
+				err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
+				utils.LogError("Problemas leer los estados: ", err)
+				comentarios = append(comentarios, ComentarioSolicitudTarjetaRodelag{
+					ID:            comentario.ID,
+					Estado:        comentario.Estado,
+					Comentario:    comentario.Comentario,
+					FechaRegistro: comentario.FechaRegistro,
+					Formulario:    comentario.Formulario,
+					Usuario:       comentario.Usuario,
+					CorreoUsuario: comentario.CorreoUsuario,
+					IDFormulario:  comentario.IDFormulario,
+				})
+			}
+			return comentarios
+		}(),
+	}
+
+	err := connMySQL.QueryRow("SELECT *, IFNULL((SELECT estado FROM formulario_comentarios WHERE formulario = 'formulario_solicitudtarjeta' AND idFormulario = a.id ORDER BY fechaRegistro DESC LIMIT 1), 'pendiente') AS estado FROM formulario_solicitudtarjeta AS a WHERE a.id = ?;", id).Scan(
+		&reg.ID,
+		&reg.Sucursal,
+		&reg.Nombre,
+		&reg.Apellido,
+		&reg.FechaNacimiento,
+		&reg.LugarNacimiento,
+		&reg.Nacionalidad,
+		&reg.Cedula,
+		&reg.FotoCedula,
+		&reg.FotoFicha,
+		&reg.FotoRecibo,
+		&reg.EstadoCivil,
+		&reg.Correo,
+		&reg.DireccionResidencia,
+		&reg.Barrio,
+		&reg.Provincia,
+		&reg.TelefonoResidencia,
+		&reg.Celular,
+		&reg.Credito,
+		&reg.Educacion,
+		&reg.NombreEmpresa,
+		&reg.TipoNegocio,
+		&reg.Cargo,
+		&reg.TiempoLaboral,
+		&reg.DireccionTrabajo,
+		&reg.TelefonoTrabajo,
+		&reg.Extension,
+		&reg.SalarioMensual,
+		&reg.FuentesIngreso,
+		&reg.MontoFuentesIngreso,
+		&reg.DetalleFuentesIngreso,
+		&reg.NombreReferenciaUno,
+		&reg.TelefonoReferenciaUno,
+		&reg.NombreReferenciaDos,
+		&reg.TelefonoReferenciaDos,
+		&reg.NombreReferenciaTres,
+		&reg.TelefonoReferenciaTres,
+		&reg.Estado,
+		&reg.FechaRegistro,
+		&reg.Estado,
+	)
+	utils.LogError("Problemas al leer registro: ", err)
+	return reg
+}
+
 func ListarSolicitudTarjetaRodelag() []SolicitudTarjetaRodelag {
 	connMySQL := conexionSolicitudTarjetaRodelag()
 	defer connMySQL.Close()
 
-	rows, err := connMySQL.Query("SELECT * FROM formulario_solicitudtarjeta;")
+	rows, err := connMySQL.Query("SELECT a.*, IFNULL((SELECT estado FROM formulario_comentarios WHERE formulario = 'formulario_solicitudtarjeta' AND idFormulario = a.id ORDER BY fechaRegistro DESC LIMIT 1), 'pendiente') AS estado FROM formulario_solicitudtarjeta AS a;")
 	utils.LogError("Problemas al listar los registros de la base de datos: ", err)
 	defer rows.Close()
 
@@ -116,6 +207,7 @@ func ListarSolicitudTarjetaRodelag() []SolicitudTarjetaRodelag {
 			&str.NombreReferenciaTres,
 			&str.TelefonoReferenciaTres,
 			&str.FechaRegistro,
+			&str.Estado,
 		)
 		utils.LogError("Problemas leer los datos: ", err)
 		strs = append(strs, SolicitudTarjetaRodelag{
@@ -157,6 +249,32 @@ func ListarSolicitudTarjetaRodelag() []SolicitudTarjetaRodelag {
 			NombreReferenciaTres:   str.NombreReferenciaTres,
 			TelefonoReferenciaTres: str.TelefonoReferenciaTres,
 			FechaRegistro:          str.FechaRegistro,
+			Estado:                 str.Estado,
+			Comentarios: func() []ComentarioSolicitudTarjetaRodelag {
+				consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_solicitudtarjeta", str.ID)
+
+				rows, err := connMySQL.Query(consulta)
+				utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+				defer rows.Close()
+
+				comentario, comentarios := ComentarioSolicitudTarjetaRodelag{}, []ComentarioSolicitudTarjetaRodelag{}
+
+				for rows.Next() {
+					err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
+					utils.LogError("Problemas leer los estados: ", err)
+					comentarios = append(comentarios, ComentarioSolicitudTarjetaRodelag{
+						ID:            comentario.ID,
+						Estado:        comentario.Estado,
+						Comentario:    comentario.Comentario,
+						FechaRegistro: comentario.FechaRegistro,
+						Formulario:    comentario.Formulario,
+						Usuario:       comentario.Usuario,
+						CorreoUsuario: comentario.CorreoUsuario,
+						IDFormulario:  comentario.IDFormulario,
+					})
+				}
+				return comentarios
+			}(),
 		})
 	}
 	return strs
@@ -288,4 +406,27 @@ func CrearSolicitudTarjetaRodelag(
 	)
 
 	return sec
+}
+
+func CrearComentarioSolicitudTarjetaRodelag(estado, comentario, formulario, usuario, correoUsuario string, idFormulario int) ComentarioSolicitudTarjetaRodelag {
+	c := ComentarioSolicitudTarjetaRodelag{
+		Estado:        estado,
+		Comentario:    comentario,
+		Formulario:    formulario,
+		Usuario:       usuario,
+		CorreoUsuario: correoUsuario,
+		IDFormulario:  idFormulario,
+		FechaRegistro: time.Now().Format("2006-01-02 15:04:05"),
+	}
+
+	connMySQL := conexionSolicitudTarjetaRodelag()
+	defer connMySQL.Close()
+
+	conn, err := connMySQL.Prepare("INSERT INTO formulario_comentarios (estado, comentario, formulario, usuario, correoUsuario, idFormulario, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?)")
+	utils.LogError("Problemas al crear el estado en la base de datos: ", err)
+	defer conn.Close()
+
+	conn.Exec(c.Estado, c.Comentario, c.Formulario, c.Usuario, c.CorreoUsuario, c.IDFormulario, c.FechaRegistro)
+
+	return c
 }

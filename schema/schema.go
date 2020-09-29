@@ -29,26 +29,33 @@ func init() {
 			"solicitudaplazamientopago_ver":    formularios.SolicitudAplazamientoPagoQuery()["solicitudaplazamientopago_ver"],
 			"solicitudaplazamientopago_listar": formularios.SolicitudAplazamientoPagoQuery()["solicitudaplazamientopago_listar"],
 
-			//Formulario de Prevención de Fraude
-			"prevencionfraude_listar": formularios.PrevencionFraudeQuery()["prevencionfraude_listar"],
-
 			//Formulario de Solicitud Tarjeta Rodelag
+			"solicitudtarjetarodelag_ver":    formularios.SolicitudTarjetaRodelagQuery()["solicitudtarjetarodelag_ver"],
 			"solicitudtarjetarodelag_listar": formularios.SolicitudTarjetaRodelagQuery()["solicitudtarjetarodelag_listar"],
 
-			//Formulario de Reclamo
-			"reclamo_listar": formularios.ReclamoQuery()["reclamo_listar"],
-
 			//Formulario de Notificación Descuento
+			"notificaciondescuento_ver":    formularios.NotificacionDescuentoQuery()["notificaciondescuento_ver"],
 			"notificaciondescuento_listar": formularios.NotificacionDescuentoQuery()["notificaciondescuento_listar"],
 
+			//Encuesta de Satisfacción Instalación AA
+			"esiaa_ver":    formularios.EsiaaQuery()["esiaa_ver"],
+			"esiaa_listar": formularios.EsiaaQuery()["esiaa_listar"],
+
+			//Formulario de Prevención de Fraude
+			"prevencionfraude_ver":    formularios.PrevencionFraudeQuery()["prevencionfraude_ver"],
+			"prevencionfraude_listar": formularios.PrevencionFraudeQuery()["prevencionfraude_listar"],
+
+			//Formulario de Reclamo
+			"reclamo_ver":    formularios.ReclamoQuery()["reclamo_ver"],
+			"reclamo_listar": formularios.ReclamoQuery()["reclamo_listar"],
+
 			//Formulario de Contáctenos
+			"contactenos_ver":    formularios.ContactenosQuery()["contactenos_ver"],
 			"contactenos_listar": formularios.ContactenosQuery()["contactenos_listar"],
 
 			//Formulario de Contáctenos de ventas comerciales
+			"contactenosvc_ver":    formularios.ContactenosVCQuery()["contactenosvc_ver"],
 			"contactenosvc_listar": formularios.ContactenosVCQuery()["contactenosvc_listar"],
-
-			//Encuesta de Satisfacción Instalación AA
-			"esiaa_listar": formularios.EsiaaQuery()["esiaa_listar"],
 
 			//Inventario de los proveedores
 			"proveedor_inventario_listar": proveedores.ProveedoreInventarioQuery()["proveedor_inventario_listar"],
@@ -78,26 +85,33 @@ func init() {
 			"solicitudaplazamientopago_modificar":        formularios.SolicitudAplazamientoPagoMutation()["solicitudaplazamientopago_modificar"],
 			"solicitudaplazamientopago_crear_comentario": formularios.SolicitudAplazamientoPagoMutation()["solicitudaplazamientopago_crear_comentario"],
 
-			//Formulario de Prevención de Fraude
-			"prevencionfraude_crear": formularios.PrevencionFraudeMutation()["prevencionfraude_crear"],
-
 			//Formulario de Solicitud Tarjeta Rodelag
-			"solicitudtarjetarodelag_crear": formularios.SolicitudTarjetaRodelagMutation()["solicitudtarjetarodelag_crear"],
-
-			//Formulario de Reclamo
-			"reclamo_crear": formularios.ReclamoMutation()["reclamo_crear"],
+			"solicitudtarjetarodelag_crear":            formularios.SolicitudTarjetaRodelagMutation()["solicitudtarjetarodelag_crear"],
+			"solicitudtarjetarodelag_crear_comentario": formularios.SolicitudTarjetaRodelagMutation()["solicitudtarjetarodelag_crear_comentario"],
 
 			//Formulario de Notificación Descuento
-			"notificaciondescuento_crear": formularios.NotificacionDescuentoMutation()["notificaciondescuento_crear"],
-
-			//Formulario de Contáctenos
-			"contactenos_crear": formularios.ContactenosMutation()["contactenos_crear"],
-
-			//Formulario de Contáctenos de ventas comerciales
-			"contactenosvc_crear": formularios.ContactenosVCMutation()["contactenosvc_crear"],
+			"notificaciondescuento_crear":            formularios.NotificacionDescuentoMutation()["notificaciondescuento_crear"],
+			"notificaciondescuento_crear_comentario": formularios.NotificacionDescuentoMutation()["notificaciondescuento_crear_comentario"],
 
 			//Encuesta de Satisfacción Instalación AA
-			"esiaa_crear": formularios.EsiaaMutation()["esiaa_crear"],
+			"esiaa_crear":            formularios.EsiaaMutation()["esiaa_crear"],
+			"esiaa_crear_comentario": formularios.EsiaaMutation()["esiaa_crear_comentario"],
+
+			//Formulario de Prevención de Fraude
+			"prevencionfraude_crear":            formularios.PrevencionFraudeMutation()["prevencionfraude_crear"],
+			"prevencionfraude_crear_comentario": formularios.PrevencionFraudeMutation()["prevencionfraude_crear_comentario"],
+
+			//Formulario de Reclamo
+			"reclamo_crear":            formularios.ReclamoMutation()["reclamo_crear"],
+			"reclamo_crear_comentario": formularios.ReclamoMutation()["reclamo_crear_comentario"],
+
+			//Formulario de Contáctenos
+			"contactenos_crear":            formularios.ContactenosMutation()["contactenos_crear"],
+			"contactenos_crear_comentario": formularios.ContactenosMutation()["contactenos_crear_comentario"],
+
+			//Formulario de Contáctenos de ventas comerciales
+			"contactenosvc_crear":            formularios.ContactenosVCMutation()["contactenosvc_crear"],
+			"contactenosvc_crear_comentario": formularios.ContactenosVCMutation()["contactenosvc_crear_comentario"],
 		},
 	})
 

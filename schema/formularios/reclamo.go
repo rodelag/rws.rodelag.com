@@ -11,6 +11,30 @@ import (
 
 func ReclamoQuery() map[string]*graphql.Field {
 	schemas := map[string]*graphql.Field{
+		"reclamo_ver": {
+			Type:        types.ReclamoType,
+			Description: "Ver el de detalle de Reclamo",
+			Args: graphql.FieldConfigArgument{
+				"id": &graphql.ArgumentConfig{
+					Type:        graphql.Int,
+					Description: "ID del registro",
+				},
+			},
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				_, isValid, err := auth.ValidateToken(p.Context.Value("token").(string))
+				if err != nil {
+					return nil, err
+				}
+				if !isValid {
+					return nil, gqlerrors.FormatError(errors.New("Token de autorización inválido"))
+				}
+
+				if id, ok := p.Args["id"].(int); ok {
+					return resolvers.VerReclamo(id), nil
+				}
+				return nil, nil
+			},
+		},
 		"reclamo_listar": {
 			Type: graphql.NewList(types.ReclamoType),
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
@@ -87,6 +111,53 @@ func ReclamoMutation() map[string]*graphql.Field {
 				adjuntoDocumento, _ := params.Args["adjuntoDocumento"].(string)
 
 				return resolvers.CrearReclamo(nombre, apellido, cedula, correo, telefono, tipoReclamo, detalle, adjuntoDocumento), nil
+			},
+		},
+		"reclamo_crear_comentario": &graphql.Field{
+			Type:        types.ReclamoComentarioType,
+			Description: "Creación de comentario de Prevención de Fraude",
+			Args: graphql.FieldConfigArgument{
+				"estado": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Estado del registro",
+				},
+				"comentario": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Comentario del agente para con el registro",
+				},
+				"formulario": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Formulario al que pertenece el estado",
+				},
+				"usuario": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Usuario que gestiona el registro",
+				},
+				"correoUsuario": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Correo del usuario que gestiona el registro",
+				},
+				"idFormulario": &graphql.ArgumentConfig{
+					Type:        graphql.Int,
+					Description: "ID del registro",
+				},
+			},
+			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
+				_, isValid, err := auth.ValidateToken(params.Context.Value("token").(string))
+				if err != nil {
+					return nil, err
+				}
+				if !isValid {
+					return nil, gqlerrors.FormatError(errors.New("Token de autorización inválido"))
+				}
+				estado, _ := params.Args["estado"].(string)
+				comentario, _ := params.Args["comentario"].(string)
+				formulario, _ := params.Args["formulario"].(string)
+				usuario, _ := params.Args["usuario"].(string)
+				correoUsuario, _ := params.Args["correoUsuario"].(string)
+				idFormulario, _ := params.Args["idFormulario"].(int)
+
+				return resolvers.CrearComentarioReclamo(estado, comentario, formulario, usuario, correoUsuario, idFormulario), nil
 			},
 		},
 	}

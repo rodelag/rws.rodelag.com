@@ -19,7 +19,20 @@ type Reclamo struct {
 	TipoReclamo,
 	Detalle,
 	AdjuntoDocumento,
+	Estado,
 	FechaRegistro string
+	Comentarios []ComentarioReclamo
+}
+
+type ComentarioReclamo struct {
+	ID,
+	Estado,
+	Comentario,
+	FechaRegistro,
+	Formulario,
+	Usuario,
+	CorreoUsuario string
+	IDFormulario int
 }
 
 func conexionReclamo() *sql.DB {
@@ -37,11 +50,60 @@ func conexionReclamo() *sql.DB {
 	return connMySQL
 }
 
+func VerReclamo(id int) Reclamo {
+	connMySQL := conexionReclamo()
+	defer connMySQL.Close()
+
+	reg := Reclamo{
+		Comentarios: func() []ComentarioReclamo {
+			consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_reclamo", id)
+
+			rows, err := connMySQL.Query(consulta)
+			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+			defer rows.Close()
+
+			comentario, comentarios := ComentarioReclamo{}, []ComentarioReclamo{}
+
+			for rows.Next() {
+				err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
+				utils.LogError("Problemas leer los estados: ", err)
+				comentarios = append(comentarios, ComentarioReclamo{
+					ID:            comentario.ID,
+					Estado:        comentario.Estado,
+					Comentario:    comentario.Comentario,
+					FechaRegistro: comentario.FechaRegistro,
+					Formulario:    comentario.Formulario,
+					Usuario:       comentario.Usuario,
+					CorreoUsuario: comentario.CorreoUsuario,
+					IDFormulario:  comentario.IDFormulario,
+				})
+			}
+			return comentarios
+		}(),
+	}
+
+	err := connMySQL.QueryRow("SELECT *, IFNULL((SELECT estado FROM formulario_comentarios WHERE formulario = 'formulario_reclamo' AND idFormulario = a.id ORDER BY fechaRegistro DESC LIMIT 1), 'pendiente') AS estado FROM formulario_reclamo AS a WHERE a.id = ?;", id).Scan(
+		&reg.ID,
+		&reg.Nombre,
+		&reg.Apellido,
+		&reg.Cedula,
+		&reg.Correo,
+		&reg.Telefono,
+		&reg.TipoReclamo,
+		&reg.Detalle,
+		&reg.AdjuntoDocumento,
+		&reg.FechaRegistro,
+		&reg.Estado,
+	)
+	utils.LogError("Problemas al leer registro: ", err)
+	return reg
+}
+
 func ListarReclamo() []Reclamo {
 	connMySQL := conexionReclamo()
 	defer connMySQL.Close()
 
-	rows, err := connMySQL.Query("SELECT * FROM formulario_reclamo;")
+	rows, err := connMySQL.Query("SELECT a.*, IFNULL((SELECT estado FROM formulario_comentarios WHERE formulario = 'formulario_reclamo' AND idFormulario = a.id ORDER BY fechaRegistro DESC LIMIT 1), 'pendiente') AS estado FROM formulario_reclamo AS a;")
 	utils.LogError("Problemas al listar los registros de la base de datos: ", err)
 	defer rows.Close()
 
@@ -60,6 +122,7 @@ func ListarReclamo() []Reclamo {
 			&re.Detalle,
 			&re.AdjuntoDocumento,
 			&re.FechaRegistro,
+			&re.Estado,
 		)
 		utils.LogError("Problemas leer los datos: ", err)
 		res = append(res, Reclamo{
@@ -73,6 +136,32 @@ func ListarReclamo() []Reclamo {
 			Detalle:          re.Detalle,
 			AdjuntoDocumento: re.AdjuntoDocumento,
 			FechaRegistro:    re.FechaRegistro,
+			Estado:           re.Estado,
+			Comentarios: func() []ComentarioReclamo {
+				consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_reclamo", re.ID)
+
+				rows, err := connMySQL.Query(consulta)
+				utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+				defer rows.Close()
+
+				comentario, comentarios := ComentarioReclamo{}, []ComentarioReclamo{}
+
+				for rows.Next() {
+					err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
+					utils.LogError("Problemas leer los estados: ", err)
+					comentarios = append(comentarios, ComentarioReclamo{
+						ID:            comentario.ID,
+						Estado:        comentario.Estado,
+						Comentario:    comentario.Comentario,
+						FechaRegistro: comentario.FechaRegistro,
+						Formulario:    comentario.Formulario,
+						Usuario:       comentario.Usuario,
+						CorreoUsuario: comentario.CorreoUsuario,
+						IDFormulario:  comentario.IDFormulario,
+					})
+				}
+				return comentarios
+			}(),
 		})
 	}
 	return res
@@ -111,4 +200,27 @@ func CrearReclamo(nombre, apellido, cedula, correo, telefono, tipoReclamo, detal
 	)
 
 	return re
+}
+
+func CrearComentarioReclamo(estado, comentario, formulario, usuario, correoUsuario string, idFormulario int) ComentarioReclamo {
+	c := ComentarioReclamo{
+		Estado:        estado,
+		Comentario:    comentario,
+		Formulario:    formulario,
+		Usuario:       usuario,
+		CorreoUsuario: correoUsuario,
+		IDFormulario:  idFormulario,
+		FechaRegistro: time.Now().Format("2006-01-02 15:04:05"),
+	}
+
+	connMySQL := conexionEsiaa()
+	defer connMySQL.Close()
+
+	conn, err := connMySQL.Prepare("INSERT INTO formulario_comentarios (estado, comentario, formulario, usuario, correoUsuario, idFormulario, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?)")
+	utils.LogError("Problemas al crear el estado en la base de datos: ", err)
+	defer conn.Close()
+
+	conn.Exec(c.Estado, c.Comentario, c.Formulario, c.Usuario, c.CorreoUsuario, c.IDFormulario, c.FechaRegistro)
+
+	return c
 }

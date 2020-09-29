@@ -2,6 +2,45 @@ package formularios
 
 import "github.com/graphql-go/graphql"
 
+var SolicitudTarjetaRodelagComentarioType = graphql.NewObject(graphql.ObjectConfig{
+	Name:        "SolicitudTarjetaRodelagComentarios",
+	Description: "Comentario de registro para la solicitud de tarjeta Rodelag",
+	Fields: graphql.Fields{
+		"id": &graphql.Field{
+			Type:        graphql.Int,
+			Description: "ID del estado",
+		},
+		"estado": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Estado del registro",
+		},
+		"comentario": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Comentario del agente para con el registro",
+		},
+		"fechaRegistro": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Fecha de creación del estado",
+		},
+		"formulario": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Formulario al que pertenece el estado",
+		},
+		"usuario": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Usuario que gestiona el registro",
+		},
+		"correoUsuario": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Correo del usuario que gestiona el registro",
+		},
+		"idFormulario": &graphql.Field{
+			Type:        graphql.Int,
+			Description: "ID del registro",
+		},
+	},
+})
+
 var SolicitudTarjetaRodelagType = graphql.NewObject(graphql.ObjectConfig{
 	Name:        "SolicitudTarjetaRodelag",
 	Description: "Solicitud de Tarjeta Rodelag",
@@ -154,9 +193,17 @@ var SolicitudTarjetaRodelagType = graphql.NewObject(graphql.ObjectConfig{
 			Type:        graphql.String,
 			Description: "Teléfono de referencia número tres",
 		},
+		"estado": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Estado del registro",
+		},
 		"fechaRegistro": &graphql.Field{
 			Type:        graphql.String,
 			Description: "Fecha del registro",
+		},
+		"comentarios": &graphql.Field{
+			Type:        graphql.NewList(SolicitudTarjetaRodelagComentarioType),
+			Description: "Comentarios del registro",
 		},
 	},
 })

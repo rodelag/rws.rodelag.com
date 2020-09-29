@@ -11,6 +11,30 @@ import (
 
 func NotificacionDescuentoQuery() map[string]*graphql.Field {
 	schemas := map[string]*graphql.Field{
+		"notificaciondescuento_ver": {
+			Type:        types.NotificacionDescuentoType,
+			Description: "Ver el de detalle de la solicitud de notificación de descuento",
+			Args: graphql.FieldConfigArgument{
+				"id": &graphql.ArgumentConfig{
+					Type:        graphql.Int,
+					Description: "ID del registro",
+				},
+			},
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				_, isValid, err := auth.ValidateToken(p.Context.Value("token").(string))
+				if err != nil {
+					return nil, err
+				}
+				if !isValid {
+					return nil, gqlerrors.FormatError(errors.New("Token de autorización inválido"))
+				}
+
+				if id, ok := p.Args["id"].(int); ok {
+					return resolvers.VerNotificacionDescuento(id), nil
+				}
+				return nil, nil
+			},
+		},
 		"notificaciondescuento_listar": {
 			Type: graphql.NewList(types.NotificacionDescuentoType),
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
@@ -120,6 +144,53 @@ func NotificacionDescuentoMutation() map[string]*graphql.Field {
 					precioRodelag,
 					fotoCotizacion,
 				), nil
+			},
+		},
+		"notificaciondescuento_crear_comentario": &graphql.Field{
+			Type:        types.NotificacionDescuentoComentarioType,
+			Description: "Creación de comentario de la notificación de descuento",
+			Args: graphql.FieldConfigArgument{
+				"estado": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Estado del registro",
+				},
+				"comentario": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Comentario del agente para con el registro",
+				},
+				"formulario": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Formulario al que pertenece el estado",
+				},
+				"usuario": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Usuario que gestiona el registro",
+				},
+				"correoUsuario": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Correo del usuario que gestiona el registro",
+				},
+				"idFormulario": &graphql.ArgumentConfig{
+					Type:        graphql.Int,
+					Description: "ID del registro",
+				},
+			},
+			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
+				_, isValid, err := auth.ValidateToken(params.Context.Value("token").(string))
+				if err != nil {
+					return nil, err
+				}
+				if !isValid {
+					return nil, gqlerrors.FormatError(errors.New("Token de autorización inválido"))
+				}
+				estado, _ := params.Args["estado"].(string)
+				comentario, _ := params.Args["comentario"].(string)
+				formulario, _ := params.Args["formulario"].(string)
+				usuario, _ := params.Args["usuario"].(string)
+				correoUsuario, _ := params.Args["correoUsuario"].(string)
+				idFormulario, _ := params.Args["idFormulario"].(int)
+
+				return resolvers.CrearComentarioNotificacionDescuento(estado, comentario, formulario, usuario, correoUsuario, idFormulario), nil
 			},
 		},
 	}
