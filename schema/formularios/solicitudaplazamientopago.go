@@ -180,7 +180,7 @@ func SolicitudAplazamientoPagoMutation() map[string]*graphql.Field {
 					Description: "Propuesta que se aplica al cliente, gestionado por el agente",
 				},
 				"id": &graphql.ArgumentConfig{
-					Type:        graphql.String,
+					Type:        graphql.Int,
 					Description: "id del registro",
 				},
 			},
