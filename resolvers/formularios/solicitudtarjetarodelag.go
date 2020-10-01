@@ -148,7 +148,6 @@ func VerSolicitudTarjetaRodelag(id int) SolicitudTarjetaRodelag {
 		&reg.TelefonoReferenciaDos,
 		&reg.NombreReferenciaTres,
 		&reg.TelefonoReferenciaTres,
-		&reg.Estado,
 		&reg.FechaRegistro,
 		&reg.Estado,
 	)
