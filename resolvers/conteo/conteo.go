@@ -14,11 +14,17 @@ type Conteo struct {
 	RegistroEmpresa,
 	RegistroSucursal,
 	RegistroSucursalNombre,
+	RegistroEntradaAnt,
 	RegistroEntrada,
+	RegistroSalidaAnt,
 	RegistroSalida,
+	RegistroFacturasAnt,
 	RegistroFacturas,
+	RegistroTiquetePromedioAnt,
 	RegistroTiquetePromedio,
+	RegistroArticulosAnt,
 	RegistroArticulos,
+	RegistroVentaAnt,
 	RegistroVenta,
 	RegistroFecha,
 	RegistroIP string
@@ -56,30 +62,42 @@ func ListarConteo(inicio, fin string) []Conteo {
 			&con.RegistroEmpresa,
 			&con.RegistroSucursal,
 			&con.RegistroSucursalNombre,
+			&con.RegistroEntradaAnt,
 			&con.RegistroEntrada,
+			&con.RegistroSalidaAnt,
 			&con.RegistroSalida,
+			&con.RegistroFacturasAnt,
 			&con.RegistroFacturas,
+			&con.RegistroTiquetePromedioAnt,
 			&con.RegistroTiquetePromedio,
+			&con.RegistroArticulosAnt,
 			&con.RegistroArticulos,
+			&con.RegistroVentaAnt,
 			&con.RegistroVenta,
 			&con.RegistroFecha,
 			&con.RegistroIP,
 		)
 		utils.LogError("Problemas leer los datos: ", err)
 		cons = append(cons, Conteo{
-			RegistroID:              con.RegistroID,
-			RegistroNumero:          con.RegistroNumero,
-			RegistroEmpresa:         con.RegistroEmpresa,
-			RegistroSucursal:        con.RegistroSucursal,
-			RegistroSucursalNombre:  con.RegistroSucursalNombre,
-			RegistroEntrada:         con.RegistroEntrada,
-			RegistroSalida:          con.RegistroSalida,
-			RegistroFacturas:        con.RegistroFacturas,
-			RegistroTiquetePromedio: con.RegistroTiquetePromedio,
-			RegistroArticulos:       con.RegistroArticulos,
-			RegistroVenta:           con.RegistroVenta,
-			RegistroFecha:           con.RegistroFecha,
-			RegistroIP:              con.RegistroIP,
+			RegistroID:                 con.RegistroID,
+			RegistroNumero:             con.RegistroNumero,
+			RegistroEmpresa:            con.RegistroEmpresa,
+			RegistroSucursal:           con.RegistroSucursal,
+			RegistroSucursalNombre:     con.RegistroSucursalNombre,
+			RegistroEntradaAnt:         con.RegistroEntradaAnt,
+			RegistroEntrada:            con.RegistroEntrada,
+			RegistroSalidaAnt:          con.RegistroSalidaAnt,
+			RegistroSalida:             con.RegistroSalida,
+			RegistroFacturasAnt:        con.RegistroFacturasAnt,
+			RegistroFacturas:           con.RegistroFacturas,
+			RegistroTiquetePromedioAnt: con.RegistroTiquetePromedioAnt,
+			RegistroTiquetePromedio:    con.RegistroTiquetePromedio,
+			RegistroArticulosAnt:       con.RegistroArticulosAnt,
+			RegistroArticulos:          con.RegistroArticulos,
+			RegistroVentaAnt:           con.RegistroVentaAnt,
+			RegistroVenta:              con.RegistroVenta,
+			RegistroFecha:              con.RegistroFecha,
+			RegistroIP:                 con.RegistroIP,
 		})
 	}
 	return cons
@@ -89,23 +107,49 @@ func ListarConteo(inicio, fin string) []Conteo {
 func consulta(inicio, fin string) string {
 	consulta := `
 		SELECT
-			IFNULL(registroID, '') AS registroID,
-			IFNULL(registroNumero, '') AS registroNumero,
-			IFNULL(registroEmpresa, '') AS registroEmpresa,
-			IFNULL(registroSucursal, '') AS registroSucursal,
-			IFNULL(registroSucursalNombre, '') AS registroSucursalNombre,
-			IFNULL(registroEntrada, '') AS registroEntrada,
-			IFNULL(registroSalida, '') AS registroSalida,
-			IFNULL(registroFacturas, '') AS registroFacturas,
-			IFNULL(registroTiquetePromedio, '') AS registroTiquetePromedio,
-			IFNULL(registroArticulos, '') AS registroArticulos,
-			IFNULL(registroVenta, '') AS registroVenta,
-			IFNULL(registroFecha, '') AS registroFecha,
-			IFNULL(registroIP, '') AS registroIP
+			IFNULL(a.registroID, '') AS registroID,
+			IFNULL(a.registroNumero, '') AS registroNumero,
+			IFNULL(a.registroEmpresa, '') AS registroEmpresa,
+			IFNULL(a.registroSucursal, '') AS registroSucursal,
+			IFNULL(a.registroSucursalNombre, '') AS registroSucursalNombre,
+			IFNULL(b.registroEntrada, '') AS registroEntradaAnt,
+			IFNULL(a.registroEntrada, '') AS registroEntrada,
+			IFNULL(b.registroSalida, '') AS registroSalidaAnt,
+			IFNULL(a.registroSalida, '') AS registroSalida,
+			IFNULL(b.registroFacturas, '') AS registroFacturasAnt,
+			IFNULL(a.registroFacturas, '') AS registroFacturas,
+			IFNULL(b.registroTiquetePromedio, '') AS registroTiquetePromedioAnt,
+			IFNULL(a.registroTiquetePromedio, '') AS registroTiquetePromedio,
+			IFNULL(b.registroArticulos, '') AS registroArticulosAnt,
+			IFNULL(a.registroArticulos, '') AS registroArticulos,
+			IFNULL(b.registroVenta, '') AS registroVentaAnt,
+			IFNULL(a.registroVenta, '') AS registroVenta,
+			IFNULL(a.registroFecha, '') AS registroFecha,
+			IFNULL(a.registroIP, '') AS registroIP
 		FROM
-			rodelag_conteo.trafico
+			rodelag_conteo.trafico AS a
+			INNER JOIN
+			(SELECT
+				 IFNULL(b.registroID, '') AS registroID,
+				 IFNULL(b.registroNumero, '') AS registroNumero,
+				 IFNULL(b.registroEmpresa, '') AS registroEmpresa,
+				 IFNULL(b.registroSucursal, '') AS registroSucursal,
+				 IFNULL(b.registroSucursalNombre, '') AS registroSucursalNombre,
+				 IFNULL(b.registroEntrada, '') AS registroEntrada,
+				 IFNULL(b.registroSalida, '') AS registroSalida,
+				 IFNULL(b.registroFacturas, '') AS registroFacturas,
+				 IFNULL(b.registroTiquetePromedio, '') AS registroTiquetePromedio,
+				 IFNULL(b.registroArticulos, '') AS registroArticulos,
+				 IFNULL(b.registroVenta, '') AS registroVenta,
+				 IFNULL(b.registroFecha, '') AS registroFecha,
+				 IFNULL(b.registroIP, '') AS registroIP
+			 FROM
+				 rodelag_conteo.trafico AS b
+			 WHERE
+				DATE(b.registroFecha) BETWEEN DATE_ADD(DATE_ADD('%s', INTERVAL -1 YEAR), INTERVAL +1 DAY) AND DATE_ADD(DATE_ADD('%s', INTERVAL -1 YEAR), INTERVAL +1 DAY) GROUP BY b.registroSucursal) AS b
+				ON a.registroSucursal = b.registroSucursal
 		WHERE
-			DATE(registroFecha) BETWEEN '%s' AND '%s'
+			DATE(a.registroFecha) BETWEEN '%s' AND '%s'
 	`
-	return fmt.Sprintf(consulta, inicio, fin)
+	return fmt.Sprintf(consulta, inicio, fin, inicio, fin)
 }
