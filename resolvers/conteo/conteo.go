@@ -112,7 +112,7 @@ func consulta(inicio, fin string) string {
 			IFNULL(a.registroEmpresa, '') AS registroEmpresa,
 			IFNULL(a.registroSucursal, '') AS registroSucursal,
 			IFNULL(a.registroSucursalNombre, '') AS registroSucursalNombre,
-			SUM(IFNULL(b.registroEntrada, 0)) AS registroEntradaAnt,
+			IFNULL(b.registroEntrada, 0) AS registroEntradaAnt,
 			SUM(IFNULL(a.registroEntrada, 0)) AS registroEntrada,
 			IFNULL(b.registroSalida, '') AS registroSalidaAnt,
 			IFNULL(a.registroSalida, '') AS registroSalida,
@@ -122,7 +122,7 @@ func consulta(inicio, fin string) string {
 			IFNULL(a.registroTiquetePromedio, '') AS registroTiquetePromedio,
 			IFNULL(b.registroArticulos, '') AS registroArticulosAnt,
 			IFNULL(a.registroArticulos, '') AS registroArticulos,
-			SUM(IFNULL(b.registroVenta, 0)) AS registroVentaAnt,
+			IFNULL(b.registroVenta, 0) AS registroVentaAnt,
 			SUM(IFNULL(a.registroVenta, 0)) AS registroVenta,
 			IFNULL(a.registroFecha, '') AS registroFecha,
 			IFNULL(a.registroIP, '') AS registroIP
