@@ -150,6 +150,7 @@ func consulta(inicio, fin string) string {
 				ON a.registroSucursal = b.registroSucursal
 		WHERE
 			DATE(a.registroFecha) BETWEEN '%s' AND '%s'
+			GROUP BY a.registroSucursal
 	`
 	return fmt.Sprintf(consulta, inicio, fin, inicio, fin)
 }

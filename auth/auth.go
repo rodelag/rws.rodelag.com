@@ -27,12 +27,13 @@ func ValidateToken(t string) (*jwt.Token, bool, error) {
 
 	token, _ := jwt.Parse(t, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("There was an error")
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 		return jwtSecret, nil
 	})
 
 	if _, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		//t1, t2 := time.Now(), claims["fec"]
 		return token, true, nil
 	} else {
 		return nil, false, gqlerrors.FormatError(errors.New("Token de autorización inválido"))
