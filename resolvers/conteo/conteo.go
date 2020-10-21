@@ -112,8 +112,8 @@ func consulta(inicio, fin string) string {
 			IFNULL(a.registroEmpresa, '') AS registroEmpresa,
 			IFNULL(a.registroSucursal, '') AS registroSucursal,
 			IFNULL(a.registroSucursalNombre, '') AS registroSucursalNombre,
-			IFNULL(b.registroEntrada, '') AS registroEntradaAnt,
-			IFNULL(a.registroEntrada, '') AS registroEntrada,
+			SUM(IFNULL(b.registroEntrada, 0)) AS registroEntradaAnt,
+			SUM(IFNULL(a.registroEntrada, 0)) AS registroEntrada,
 			IFNULL(b.registroSalida, '') AS registroSalidaAnt,
 			IFNULL(a.registroSalida, '') AS registroSalida,
 			IFNULL(b.registroFacturas, '') AS registroFacturasAnt,
@@ -122,8 +122,8 @@ func consulta(inicio, fin string) string {
 			IFNULL(a.registroTiquetePromedio, '') AS registroTiquetePromedio,
 			IFNULL(b.registroArticulos, '') AS registroArticulosAnt,
 			IFNULL(a.registroArticulos, '') AS registroArticulos,
-			IFNULL(b.registroVenta, '') AS registroVentaAnt,
-			IFNULL(a.registroVenta, '') AS registroVenta,
+			SUM(IFNULL(b.registroVenta, 0)) AS registroVentaAnt,
+			SUM(IFNULL(a.registroVenta, 0)) AS registroVenta,
 			IFNULL(a.registroFecha, '') AS registroFecha,
 			IFNULL(a.registroIP, '') AS registroIP
 		FROM
@@ -135,12 +135,12 @@ func consulta(inicio, fin string) string {
 				 IFNULL(b.registroEmpresa, '') AS registroEmpresa,
 				 IFNULL(b.registroSucursal, '') AS registroSucursal,
 				 IFNULL(b.registroSucursalNombre, '') AS registroSucursalNombre,
-				 IFNULL(b.registroEntrada, '') AS registroEntrada,
-				 IFNULL(b.registroSalida, '') AS registroSalida,
+				 SUM(IFNULL(b.registroEntrada, 0)) AS registroEntrada,
+				 SUM(IFNULL(b.registroSalida, 0)) AS registroSalida,
 				 IFNULL(b.registroFacturas, '') AS registroFacturas,
 				 IFNULL(b.registroTiquetePromedio, '') AS registroTiquetePromedio,
 				 IFNULL(b.registroArticulos, '') AS registroArticulos,
-				 IFNULL(b.registroVenta, '') AS registroVenta,
+				 SUM(IFNULL(b.registroVenta, 0)) AS registroVenta,
 				 IFNULL(b.registroFecha, '') AS registroFecha,
 				 IFNULL(b.registroIP, '') AS registroIP
 			 FROM
