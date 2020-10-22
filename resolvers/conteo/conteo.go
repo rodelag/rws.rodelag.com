@@ -117,11 +117,11 @@ func consulta(inicio, fin string) string {
 			IFNULL(b.registroSalida, '') AS registroSalidaAnt,
 			SUM(DISTINCT IFNULL(a.registroSalida, 0)) AS registroSalida,
 			IFNULL(b.registroFacturas, '') AS registroFacturasAnt,
-			IFNULL(a.registroFacturas, '') AS registroFacturas,
+			SUM(DISTINCT IFNULL(a.registroFacturas, 0)) AS registroFacturas,
 			IFNULL(b.registroTiquetePromedio, '') AS registroTiquetePromedioAnt,
-			IFNULL(a.registroTiquetePromedio, '') AS registroTiquetePromedio,
+			SUM(DISTINCT IFNULL(a.registroTiquetePromedio, 0)) AS registroTiquetePromedio,
 			IFNULL(b.registroArticulos, '') AS registroArticulosAnt,
-			IFNULL(a.registroArticulos, '') AS registroArticulos,
+			SUM(DISTINCT IFNULL(a.registroArticulos, 0)) AS registroArticulos,
 			IFNULL(b.registroVenta, 0) AS registroVentaAnt,
 			SUM(DISTINCT IFNULL(a.registroVenta, 0)) AS registroVenta,
 			IFNULL(a.registroFecha, '') AS registroFecha,
@@ -137,9 +137,9 @@ func consulta(inicio, fin string) string {
 				 IFNULL(b.registroSucursalNombre, '') AS registroSucursalNombre,
 				 SUM(DISTINCT IFNULL(b.registroEntrada, 0)) AS registroEntrada,
 				 SUM(DISTINCT IFNULL(b.registroSalida, 0)) AS registroSalida,
-				 IFNULL(b.registroFacturas, '') AS registroFacturas,
-				 IFNULL(b.registroTiquetePromedio, '') AS registroTiquetePromedio,
-				 IFNULL(b.registroArticulos, '') AS registroArticulos,
+				 SUM(DISTINCT IFNULL(b.registroFacturas, 0)) AS registroFacturas,
+				 SUM(DISTINCT IFNULL(b.registroTiquetePromedio, 0)) AS registroTiquetePromedio,
+				 SUM(DISTINCT IFNULL(b.registroArticulos, 0)) AS registroArticulos,
 				 SUM(DISTINCT IFNULL(b.registroVenta, 0)) AS registroVenta,
 				 IFNULL(b.registroFecha, '') AS registroFecha,
 				 IFNULL(b.registroIP, '') AS registroIP
@@ -150,7 +150,7 @@ func consulta(inicio, fin string) string {
 				ON a.registroSucursal = b.registroSucursal
 		WHERE
 			DATE(a.registroFecha) BETWEEN '%s' AND '%s'
-			GROUP BY a.registroSucursal
+			GROUP BY a.registroSucursal ORDER BY a.registroSucursalNombre
 	`
 	return fmt.Sprintf(consulta, inicio, fin, inicio, fin)
 }
