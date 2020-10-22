@@ -113,9 +113,9 @@ func consulta(inicio, fin string) string {
 			IFNULL(a.registroSucursal, '') AS registroSucursal,
 			IFNULL(a.registroSucursalNombre, '') AS registroSucursalNombre,
 			IFNULL(b.registroEntrada, 0) AS registroEntradaAnt,
-			SUM(IFNULL(a.registroEntrada, 0)) AS registroEntrada,
+			SUM(DISTINCT IFNULL(a.registroEntrada, 0)) AS registroEntrada,
 			IFNULL(b.registroSalida, '') AS registroSalidaAnt,
-			IFNULL(a.registroSalida, '') AS registroSalida,
+			SUM(DISTINCT IFNULL(a.registroSalida, 0)) AS registroSalida,
 			IFNULL(b.registroFacturas, '') AS registroFacturasAnt,
 			IFNULL(a.registroFacturas, '') AS registroFacturas,
 			IFNULL(b.registroTiquetePromedio, '') AS registroTiquetePromedioAnt,
@@ -123,7 +123,7 @@ func consulta(inicio, fin string) string {
 			IFNULL(b.registroArticulos, '') AS registroArticulosAnt,
 			IFNULL(a.registroArticulos, '') AS registroArticulos,
 			IFNULL(b.registroVenta, 0) AS registroVentaAnt,
-			SUM(IFNULL(a.registroVenta, 0)) AS registroVenta,
+			SUM(DISTINCT IFNULL(a.registroVenta, 0)) AS registroVenta,
 			IFNULL(a.registroFecha, '') AS registroFecha,
 			IFNULL(a.registroIP, '') AS registroIP
 		FROM
@@ -135,12 +135,12 @@ func consulta(inicio, fin string) string {
 				 IFNULL(b.registroEmpresa, '') AS registroEmpresa,
 				 IFNULL(b.registroSucursal, '') AS registroSucursal,
 				 IFNULL(b.registroSucursalNombre, '') AS registroSucursalNombre,
-				 SUM(IFNULL(b.registroEntrada, 0)) AS registroEntrada,
-				 SUM(IFNULL(b.registroSalida, 0)) AS registroSalida,
+				 SUM(DISTINCT IFNULL(b.registroEntrada, 0)) AS registroEntrada,
+				 SUM(DISTINCT IFNULL(b.registroSalida, 0)) AS registroSalida,
 				 IFNULL(b.registroFacturas, '') AS registroFacturas,
 				 IFNULL(b.registroTiquetePromedio, '') AS registroTiquetePromedio,
 				 IFNULL(b.registroArticulos, '') AS registroArticulos,
-				 SUM(IFNULL(b.registroVenta, 0)) AS registroVenta,
+				 SUM(DISTINCT IFNULL(b.registroVenta, 0)) AS registroVenta,
 				 IFNULL(b.registroFecha, '') AS registroFecha,
 				 IFNULL(b.registroIP, '') AS registroIP
 			 FROM
