@@ -146,11 +146,11 @@ func consulta(inicio, fin string) string {
 			 FROM
 				 rodelag_conteo.trafico AS b
 			 WHERE
-				DATE(b.registroFecha) BETWEEN DATE_ADD(DATE_ADD('%s', INTERVAL -1 YEAR), INTERVAL +1 DAY) AND DATE_ADD(DATE_ADD('%s', INTERVAL -1 YEAR), INTERVAL +1 DAY) GROUP BY b.registroSucursal, b.registroFecha) AS b
+				DATE(b.registroFecha) BETWEEN DATE_ADD(DATE_ADD('%s', INTERVAL -1 YEAR), INTERVAL +1 DAY) AND DATE_ADD(DATE_ADD('%s', INTERVAL -1 YEAR), INTERVAL +1 DAY) GROUP BY b.registroSucursal) AS b
 				ON a.registroSucursal = b.registroSucursal
 		WHERE
 			DATE(a.registroFecha) BETWEEN '%s' AND '%s'
-			GROUP BY a.registroSucursal a.registroFecha
+			GROUP BY a.registroSucursal
 	`
 	return fmt.Sprintf(consulta, inicio, fin, inicio, fin)
 }
