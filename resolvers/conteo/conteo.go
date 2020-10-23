@@ -119,7 +119,7 @@ func consulta(inicio, fin string) string {
 			IFNULL(b.registroFacturas, '') AS registroFacturasAnt,
 			SUM(IFNULL(a.registroFacturas, 0)) AS registroFacturas,
 			IFNULL(b.registroTiquetePromedio, '') AS registroTiquetePromedioAnt,
-			SUM(IFNULL(a.registroTiquetePromedio, 0)) AS registroTiquetePromedio,
+			IFNULL(a.registroTiquetePromedio, 0) AS registroTiquetePromedio,
 			IFNULL(b.registroArticulos, '') AS registroArticulosAnt,
 			SUM(IFNULL(a.registroArticulos, 0)) AS registroArticulos,
 			IFNULL(b.registroVenta, 0) AS registroVentaAnt,
@@ -138,7 +138,7 @@ func consulta(inicio, fin string) string {
 				 SUM(IFNULL(b.registroEntrada, 0)) AS registroEntrada,
 				 SUM(IFNULL(b.registroSalida, 0)) AS registroSalida,
 				 SUM(IFNULL(b.registroFacturas, 0)) AS registroFacturas,
-				 SUM(IFNULL(b.registroTiquetePromedio, 0)) AS registroTiquetePromedio,
+				 IFNULL(b.registroTiquetePromedio, 0) AS registroTiquetePromedio,
 				 SUM(IFNULL(b.registroArticulos, 0)) AS registroArticulos,
 				 SUM(IFNULL(b.registroVenta, 0)) AS registroVenta,
 				 IFNULL(b.registroFecha, '') AS registroFecha,
@@ -146,7 +146,7 @@ func consulta(inicio, fin string) string {
 			 FROM
 				 rodelag_conteo.trafico AS b
 			 WHERE
-				DATE(b.registroFecha) BETWEEN DATE_ADD(DATE_ADD('%s', INTERVAL -1 YEAR), INTERVAL +1 DAY) AND DATE_ADD(DATE_ADD('%s', INTERVAL -1 YEAR), INTERVAL +1 DAY) GROUP BY b.registroSucursal) AS b
+				DATE(b.registroFecha) BETWEEN DATE_ADD('%s', INTERVAL -1 YEAR) AND DATE_ADD('%s', INTERVAL -1 YEAR) GROUP BY b.registroSucursal) AS b
 				ON a.registroSucursal = b.registroSucursal
 		WHERE
 			DATE(a.registroFecha) BETWEEN '%s' AND '%s'
