@@ -128,7 +128,7 @@ func consulta(inicio, fin string) string {
 			IFNULL(a.registroIP, '') AS registroIP
 		FROM
 			rodelag_conteo.trafico AS a
-			INNER JOIN
+			LEFT JOIN
 			(SELECT
 				 IFNULL(b.registroID, '') AS registroID,
 				 IFNULL(b.registroNumero, '') AS registroNumero,
