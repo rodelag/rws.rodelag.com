@@ -5,6 +5,7 @@ import (
 	"rws/schema/conteo"
 	"rws/schema/formularios"
 	"rws/schema/proveedores"
+	"rws/schema/tarjeta"
 )
 
 var Schema graphql.Schema
@@ -62,6 +63,9 @@ func init() {
 
 			//Conteo de clientes en las tiendas
 			"conteo_listar": conteo.ConteoQuery()["conteo_listar"],
+
+			//Cliente Tarjeta Rodelag
+			"cliente_tarjeta_rodelag": tarjeta.TarjetaRodelagQuery()["cliente"],
 		},
 	})
 
