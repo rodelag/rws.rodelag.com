@@ -3,7 +3,7 @@ package tarjeta
 import "github.com/graphql-go/graphql"
 
 var EstadoCuentaDetalleType = graphql.NewObject(graphql.ObjectConfig{
-	Name:        "Estado Cuenta Detalle",
+	Name:        "EstadoCuentaDetalle",
 	Description: "Detalle del estado de cuenta",
 	Fields: graphql.Fields{
 		"registroFechaTran": &graphql.Field{

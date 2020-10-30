@@ -81,7 +81,7 @@ func ClienteTarjetaRodelag(cedula string) Cliente {
 			utils.LogError("Problemas al leer registro del detalle del estado de cuenta: ", err)
 			defer rows.Close()
 
-			d, detalles := EstadoCuentaDetalle{}, []EstadoCuentaDetalle{}
+			d, detalle := EstadoCuentaDetalle{}, []EstadoCuentaDetalle{}
 
 			for rows.Next() {
 				err := rows.Scan(
@@ -93,7 +93,7 @@ func ClienteTarjetaRodelag(cedula string) Cliente {
 					&d.RegistroSaldo,
 				)
 				utils.LogError("Problemas al iterar los registro del detalle del estado de cuenta: ", err)
-				detalles = append(detalles, EstadoCuentaDetalle{
+				detalle = append(detalle, EstadoCuentaDetalle{
 					RegistroFechaTran:            d.RegistroFechaTran,
 					RegistroNumeroDocumento:      d.RegistroNumeroDocumento,
 					RegistroDescripcionDocumento: d.RegistroDescripcionDocumento,
@@ -102,7 +102,7 @@ func ClienteTarjetaRodelag(cedula string) Cliente {
 					RegistroSaldo:                d.RegistroSaldo,
 				})
 			}
-			return detalles
+			return detalle
 		}(),
 	}
 

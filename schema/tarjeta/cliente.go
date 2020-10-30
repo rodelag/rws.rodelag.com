@@ -28,9 +28,10 @@ func TarjetaRodelagQuery() map[string]*graphql.Field {
 				if !isValid {
 					return nil, gqlerrors.FormatError(errors.New("Token de autorización inválido"))
 				}
-				cedula, _ := p.Args["cedula"].(string)
-
-				return resolvers.ClienteTarjetaRodelag(cedula), nil
+				if cedula, ok := p.Args["cedula"].(string); ok {
+					return resolvers.ClienteTarjetaRodelag(cedula), nil
+				}
+				return nil, nil
 			},
 		},
 	}
