@@ -2,6 +2,7 @@ package schema
 
 import (
 	"github.com/graphql-go/graphql"
+	"rws/schema/central"
 	"rws/schema/conteo"
 	"rws/schema/formularios"
 	"rws/schema/proveedores"
@@ -66,6 +67,9 @@ func init() {
 
 			//Cliente Tarjeta Rodelag
 			"cliente_tarjeta_rodelag": tarjeta.TarjetaRodelagQuery()["cliente"],
+
+			//Central teléfonica
+			"central_telefonica": central.CentralTelefonicaQuery()["central"],
 		},
 	})
 
