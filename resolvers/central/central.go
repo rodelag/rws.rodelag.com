@@ -8,6 +8,10 @@ import (
 	"rws/utils"
 )
 
+type Central struct {
+	RegistroDetalle []Colaborador
+}
+
 type Colaborador struct {
 	RegistroNombre,
 	RegistroExtension string
@@ -28,33 +32,41 @@ func conexionCentralTelefonica() *sql.DB {
 	return connRodelag
 }
 
-func CentralTelefonica(consulta string) Colaborador {
+func CentralTelefonica(consulta string) Central {
 	connRodelag := conexionCentralTelefonica()
 	defer connRodelag.Close()
 
-	colaborador := Colaborador{}
+	central := Central{
+		RegistroDetalle: func() []Colaborador {
+			rows, err := connRodelag.Query(consultaExtension(consulta))
+			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+			defer rows.Close()
 
-	err := connRodelag.QueryRow(consultaExtension(consulta)).Scan(
-		&colaborador.RegistroNombre,
-		&colaborador.RegistroExtension,
-		nil,
-	)
-	utils.LogError("Problemas al leer registro: ", err)
+			colaborador, colaboradores := Colaborador{}, []Colaborador{}
 
-	return colaborador
+			for rows.Next() {
+				err := rows.Scan(&colaborador.RegistroNombre, &colaborador.RegistroExtension)
+				utils.LogError("Problemas al iterar los registros: ", err)
+				colaboradores = append(colaboradores, Colaborador{
+					RegistroNombre:    colaborador.RegistroNombre,
+					RegistroExtension: colaborador.RegistroExtension,
+				})
+			}
+			return colaboradores
+		}(),
+	}
+	return central
 }
 
 func consultaExtension(consulta string) string {
 	c := `
 		SELECT
 			registroNombre,
-			registroExtension,
-			MATCH (registroNombre) AGAINST ('+%s' IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION) AS score
+			registroExtension
 		FROM
 			rodelag_centraltelefonica.central
 		WHERE
-			MATCH (registroNombre) AGAINST ('+%s' IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION) HAVING score > 5
-			LIMIT 1;
+			registroNombre LIKE '%%%s%%' OR registroExtension LIKE '%%%s%%';
 	`
 	return fmt.Sprintf(c, consulta, consulta)
 }
