@@ -20,9 +20,10 @@ basedatos:
             password: ***
             database: ***
 correo:
-    host: smtp.gmail.com
+    host: email-smtp.us-east-2.amazonaws.com
     port: 587
-    mail: web.rodelag@gmail.com
+    mail: no-responder-no-supervisado@portal.rodelag.com
+    user: ***
     password: ***
     to: murray.greer@rodelag.com
     asunto: Notificacion de alerta - rws.rodelag.com

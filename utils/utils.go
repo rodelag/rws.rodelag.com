@@ -36,6 +36,7 @@ func notificacion(mensaje string, error error) {
 	var (
 		servidor = viper.GetString("correo.host")
 		puerto   = viper.GetString("correo.port")
+		usuario  = viper.GetString("correo.user")
 		password = viper.GetString("correo.password")
 		correoDe = viper.GetString("correo.mail")
 		correoA  = viper.GetString("correo.to")
@@ -44,7 +45,7 @@ func notificacion(mensaje string, error error) {
 
 	msg := "From: " + correoDe + "\n" + "To: " + correoA + "\n" + "Subject: " + asunto + "\n\n" + fmt.Sprint(mensaje, error)
 
-	err := smtp.SendMail(servidor+":"+puerto, smtp.PlainAuth("", correoDe, password, servidor),
+	err := smtp.SendMail(servidor+":"+puerto, smtp.PlainAuth("", usuario, password, servidor),
 		correoDe, []string{correoA}, []byte(msg))
 
 	if err != nil {
