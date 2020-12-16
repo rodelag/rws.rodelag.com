@@ -6,6 +6,7 @@ import (
 	"rws/schema/formularios"
 	"rws/schema/proveedores"
 	"rws/schema/tarjeta"
+	"rws/schema/ventas_detalles"
 )
 
 var Schema graphql.Schema
@@ -66,6 +67,9 @@ func init() {
 
 			//Cliente Tarjeta Rodelag
 			"cliente_tarjeta_rodelag": tarjeta.TarjetaRodelagQuery()["cliente"],
+
+			//Ventas de Rodelag
+			"ventas_listar": ventas_detalles.VentasDetallesQuery()["ventas_listar"],
 		},
 	})
 
