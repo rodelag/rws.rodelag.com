@@ -2,11 +2,11 @@ package schema
 
 import (
 	"github.com/graphql-go/graphql"
+	"rws/schema/central"
 	"rws/schema/conteo"
 	"rws/schema/formularios"
 	"rws/schema/proveedores"
 	"rws/schema/tarjeta"
-	"rws/schema/ventas_detalles"
 )
 
 var Schema graphql.Schema
@@ -68,8 +68,8 @@ func init() {
 			//Cliente Tarjeta Rodelag
 			"cliente_tarjeta_rodelag": tarjeta.TarjetaRodelagQuery()["cliente"],
 
-			//Ventas de Rodelag
-			"ventas_listar": ventas_detalles.VentasDetallesQuery()["ventas_listar"],
+			//Central teléfonica
+			"central_telefonica": central.CentralTelefonicaQuery()["central"],
 		},
 	})
 
