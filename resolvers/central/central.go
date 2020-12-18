@@ -27,7 +27,7 @@ func conexionCentralTelefonica() *sql.DB {
 	)
 	connRodelag, errRodelag := sql.Open("mysql", connStringRodelag)
 	if errRodelag != nil {
-		utils.LogError("Problemas con la conexion a rodelag: ", errRodelag)
+		utils.LogError("Problemas con la conexion a rodelag: (Central) ", true, errRodelag)
 	}
 	return connRodelag
 }
@@ -39,14 +39,14 @@ func CentralTelefonica(consulta string) Central {
 	central := Central{
 		RegistroDetalle: func() []Colaborador {
 			rows, err := connRodelag.Query(consultaExtension(consulta))
-			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: (Central) ", true, err)
 			defer rows.Close()
 
 			colaborador, colaboradores := Colaborador{}, []Colaborador{}
 
 			for rows.Next() {
 				err := rows.Scan(&colaborador.RegistroNombre, &colaborador.RegistroExtension)
-				utils.LogError("Problemas al iterar los registros: ", err)
+				utils.LogError("Problemas al iterar los registros: (Central) ", true, err)
 				colaboradores = append(colaboradores, Colaborador{
 					RegistroNombre:    colaborador.RegistroNombre,
 					RegistroExtension: colaborador.RegistroExtension,

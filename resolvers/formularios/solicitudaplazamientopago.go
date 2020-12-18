@@ -55,7 +55,7 @@ func conexionSolicitudAplazamientoPago() *sql.DB {
 	)
 	connMySQL, errMySQL := sql.Open("mysql", connStringMySQL)
 	if errMySQL != nil {
-		utils.LogError("Problemas con la conexion a mysql: ", errMySQL)
+		utils.LogError("Problemas con la conexion a mysql: (SolicitudAplazamientoPago) ", true, errMySQL)
 	}
 	return connMySQL
 }
@@ -69,14 +69,14 @@ func VerSolicitudAplazamientoPago(id int) SolicitudAplazamientoPago {
 			consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_aplazamientopago", id)
 
 			rows, err := connMySQL.Query(consulta)
-			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: (SolicitudAplazamientoPago) ", false, err)
 			defer rows.Close()
 
 			comentario, comentarios := ComentarioSolicitudAplazamientoPago{}, []ComentarioSolicitudAplazamientoPago{}
 
 			for rows.Next() {
 				err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
-				utils.LogError("Problemas leer los estados: ", err)
+				utils.LogError("Problemas leer los estados: (SolicitudAplazamientoPago) ", false, err)
 				comentarios = append(comentarios, ComentarioSolicitudAplazamientoPago{
 					ID:            comentario.ID,
 					Estado:        comentario.Estado,
@@ -115,7 +115,7 @@ func VerSolicitudAplazamientoPago(id int) SolicitudAplazamientoPago {
 		&sap.FechaRegistro,
 		&sap.Estado,
 	)
-	utils.LogError("Problemas al leer registro: ", err)
+	utils.LogError("Problemas al leer registro: (SolicitudAplazamientoPago) ", false, err)
 	return sap
 }
 
@@ -124,7 +124,7 @@ func ListarSolicitudAplazamientoPago() []SolicitudAplazamientoPago {
 	defer connMySQL.Close()
 
 	rows, err := connMySQL.Query("SELECT a.*, IFNULL((SELECT estado FROM formulario_comentarios WHERE formulario = 'formulario_aplazamientopago' AND idFormulario = a.id ORDER BY fechaRegistro DESC LIMIT 1), 'pendiente') AS estado FROM formulario_aplazamientopago AS a;")
-	utils.LogError("Problemas al listar los registros de la base de datos: ", err)
+	utils.LogError("Problemas al listar los registros de la base de datos: (SolicitudAplazamientoPago) ", true, err)
 	defer rows.Close()
 
 	sap := SolicitudAplazamientoPago{}
@@ -154,7 +154,7 @@ func ListarSolicitudAplazamientoPago() []SolicitudAplazamientoPago {
 			&sap.FechaRegistro,
 			&sap.Estado,
 		)
-		utils.LogError("Problemas leer los datos: ", err)
+		utils.LogError("Problemas leer los datos: (SolicitudAplazamientoPago) ", true, err)
 		saps = append(saps, SolicitudAplazamientoPago{
 			ID:                     sap.ID,
 			Nombre:                 sap.Nombre,
@@ -181,14 +181,14 @@ func ListarSolicitudAplazamientoPago() []SolicitudAplazamientoPago {
 				consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_aplazamientopago", sap.ID)
 
 				rows, err := connMySQL.Query(consulta)
-				utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+				utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: (SolicitudAplazamientoPago) ", true, err)
 				defer rows.Close()
 
 				comentario, comentarios := ComentarioSolicitudAplazamientoPago{}, []ComentarioSolicitudAplazamientoPago{}
 
 				for rows.Next() {
 					err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
-					utils.LogError("Problemas leer los estados: ", err)
+					utils.LogError("Problemas leer los estados: (SolicitudAplazamientoPago) ", true, err)
 					comentarios = append(comentarios, ComentarioSolicitudAplazamientoPago{
 						ID:            comentario.ID,
 						Estado:        comentario.Estado,
@@ -230,7 +230,7 @@ func CrearSolicitudAplazamientoPago(nombre, apellido, correo, telefonoCasa, celu
 	defer connMySQL.Close()
 
 	conn, err := connMySQL.Prepare("INSERT INTO formulario_aplazamientopago (nombre, apellido, correo, telefonoCasa, celular, tipoProducto, tipoCliente, tipoActividadEconomica, lugarTrabajo, motivoSolicitud, detalleMotivo, cedula, talonario, cartaMotivo, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
-	utils.LogError("Problemas al crear el registro en la base de datos: ", err)
+	utils.LogError("Problemas al crear el registro en la base de datos: (SolicitudAplazamientoPago) ", false, err)
 	defer conn.Close()
 
 	conn.Exec(
@@ -267,7 +267,7 @@ func ModificarSolicitudAplazamientoPago(gestion, estadoCuenta, acp, propuesta st
 	defer connMySQL.Close()
 
 	conn, err := connMySQL.Prepare("UPDATE formulario_aplazamientopago SET gestion = ?, estadoCuenta = ?, acp = ?, propuesta = ? WHERE id = ?")
-	utils.LogError("Problemas al modificar el registro en la base de datos: ", err)
+	utils.LogError("Problemas al modificar el registro en la base de datos: (SolicitudAplazamientoPago) ", false, err)
 	defer conn.Close()
 
 	conn.Exec(sap.Gestion, sap.EstadoCuenta, sap.Acp, sap.Propuesta, sap.ID)
@@ -290,7 +290,7 @@ func CrearComentarioSolicitudAplazamientoPago(estado, comentario, formulario, us
 	defer connMySQL.Close()
 
 	conn, err := connMySQL.Prepare("INSERT INTO formulario_comentarios (estado, comentario, formulario, usuario, correoUsuario, idFormulario, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?)")
-	utils.LogError("Problemas al crear el estado en la base de datos: ", err)
+	utils.LogError("Problemas al crear el estado en la base de datos: (SolicitudAplazamientoPago) ", false, err)
 	defer conn.Close()
 
 	conn.Exec(c.Estado, c.Comentario, c.Formulario, c.Usuario, c.CorreoUsuario, c.IDFormulario, c.FechaRegistro)

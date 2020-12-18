@@ -49,7 +49,7 @@ func conexionNotificacionDescuento() *sql.DB {
 	)
 	connMySQL, errMySQL := sql.Open("mysql", connStringMySQL)
 	if errMySQL != nil {
-		utils.LogError("Problemas con la conexion a mysql: ", errMySQL)
+		utils.LogError("Problemas con la conexion a mysql: (Notificacion Descuento) ", true, errMySQL)
 	}
 	return connMySQL
 }
@@ -63,14 +63,14 @@ func VerNotificacionDescuento(id int) NotificacionDescuento {
 			consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_notificaciondescuento", id)
 
 			rows, err := connMySQL.Query(consulta)
-			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: (Notificacion Descuento) ", false, err)
 			defer rows.Close()
 
 			comentario, comentarios := ComentarioNotificacionDescuento{}, []ComentarioNotificacionDescuento{}
 
 			for rows.Next() {
 				err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
-				utils.LogError("Problemas leer los estados: ", err)
+				utils.LogError("Problemas leer los estados: (Notificacion Descuento) ", false, err)
 				comentarios = append(comentarios, ComentarioNotificacionDescuento{
 					ID:            comentario.ID,
 					Estado:        comentario.Estado,
@@ -103,7 +103,7 @@ func VerNotificacionDescuento(id int) NotificacionDescuento {
 		&reg.FechaRegistro,
 		&reg.Estado,
 	)
-	utils.LogError("Problemas al leer registro: ", err)
+	utils.LogError("Problemas al leer registro: (Notificacion Descuento) ", false, err)
 	return reg
 }
 
@@ -112,7 +112,7 @@ func ListarNotificacionDescuento() []NotificacionDescuento {
 	defer connMySQL.Close()
 
 	rows, err := connMySQL.Query("SELECT a.*, IFNULL((SELECT estado FROM formulario_comentarios WHERE formulario = 'formulario_notificaciondescuento' AND idFormulario = a.id ORDER BY fechaRegistro DESC LIMIT 1), 'pendiente') AS estado FROM formulario_notificaciondescuento AS a;")
-	utils.LogError("Problemas al listar los registros de la base de datos: ", err)
+	utils.LogError("Problemas al listar los registros de la base de datos: (Notificacion Descuento) ", true, err)
 	defer rows.Close()
 
 	nd := NotificacionDescuento{}
@@ -136,7 +136,7 @@ func ListarNotificacionDescuento() []NotificacionDescuento {
 			&nd.FechaRegistro,
 			&nd.Estado,
 		)
-		utils.LogError("Problemas leer los datos: ", err)
+		utils.LogError("Problemas leer los datos: (Notificacion Descuento) ", true, err)
 		nds = append(nds, NotificacionDescuento{
 			ID:               nd.ID,
 			Nombre:           nd.Nombre,
@@ -157,14 +157,14 @@ func ListarNotificacionDescuento() []NotificacionDescuento {
 				consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_notificaciondescuento", nd.ID)
 
 				rows, err := connMySQL.Query(consulta)
-				utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+				utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: (Notificacion Descuento) ", false, err)
 				defer rows.Close()
 
 				comentario, comentarios := ComentarioNotificacionDescuento{}, []ComentarioNotificacionDescuento{}
 
 				for rows.Next() {
 					err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
-					utils.LogError("Problemas leer los estados: ", err)
+					utils.LogError("Problemas leer los estados: (Notificacion Descuento) ", false, err)
 					comentarios = append(comentarios, ComentarioNotificacionDescuento{
 						ID:            comentario.ID,
 						Estado:        comentario.Estado,
@@ -204,7 +204,7 @@ func CrearNotificacionDescuento(nombre, apellido, sucursal, fecha, nombreProduct
 	defer connMySQL.Close()
 
 	conn, err := connMySQL.Prepare("INSERT INTO formulario_notificaciondescuento (nombre, apellido, sucursal, fecha, nombreProducto, fotoPrecio, codigoParte, cantidadVendidas, nombreCompetidor, precioCompetidor, precioRodelag, fotoCotizacion, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
-	utils.LogError("Problemas al crear el registro en la base de datos: ", err)
+	utils.LogError("Problemas al crear el registro en la base de datos: (Notificacion Descuento) ", true, err)
 	defer conn.Close()
 
 	conn.Exec(
@@ -241,7 +241,7 @@ func CrearComentarioNotificacionDescuento(estado, comentario, formulario, usuari
 	defer connMySQL.Close()
 
 	conn, err := connMySQL.Prepare("INSERT INTO formulario_comentarios (estado, comentario, formulario, usuario, correoUsuario, idFormulario, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?)")
-	utils.LogError("Problemas al crear el estado en la base de datos: ", err)
+	utils.LogError("Problemas al crear el estado en la base de datos: (Notificacion Descuento) ", true, err)
 	defer conn.Close()
 
 	conn.Exec(c.Estado, c.Comentario, c.Formulario, c.Usuario, c.CorreoUsuario, c.IDFormulario, c.FechaRegistro)

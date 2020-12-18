@@ -40,7 +40,7 @@ func conexionConteo() *sql.DB {
 	)
 	connMySQL, errMySQL := sql.Open("mysql", connStringMySQL)
 	if errMySQL != nil {
-		utils.LogError("Problemas con la conexion a mysql: ", errMySQL)
+		utils.LogError("Problemas con la conexion a mysql: (Conteo) ", true, errMySQL)
 	}
 	return connMySQL
 }
@@ -50,7 +50,7 @@ func ListarConteo(inicio, fin string) []Conteo {
 	defer connMySQL.Close()
 
 	rows, err := connMySQL.Query(consulta(inicio, fin))
-	utils.LogError("Problemas al listar los registros de la base de datos: ", err)
+	utils.LogError("Problemas al listar los registros de la base de datos: (Conteo) ", true, err)
 	defer rows.Close()
 
 	con, cons := Conteo{}, []Conteo{}
@@ -77,7 +77,7 @@ func ListarConteo(inicio, fin string) []Conteo {
 			&con.RegistroFecha,
 			&con.RegistroIP,
 		)
-		utils.LogError("Problemas leer los datos: ", err)
+		utils.LogError("Problemas leer los datos: (Conteo) ", true, err)
 		cons = append(cons, Conteo{
 			RegistroID:                 con.RegistroID,
 			RegistroNumero:             con.RegistroNumero,

@@ -43,7 +43,7 @@ func conexionComprobantePago() *sql.DB {
 	)
 	connMySQL, errMySQL := sql.Open("mysql", connStringMySQL)
 	if errMySQL != nil {
-		utils.LogError("Problemas con la conexion a mysql: ", errMySQL)
+		utils.LogError("Problemas con la conexion a mysql: (Comprobante de pago) ", true, errMySQL)
 	}
 	return connMySQL
 }
@@ -57,14 +57,14 @@ func VerComprobantePago(id int) ComprobantePago {
 			consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_comprobantepago", id)
 
 			rows, err := connMySQL.Query(consulta)
-			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: (Comprobante de pago) ", true, err)
 			defer rows.Close()
 
 			comentario, comentarios := ComentarioComprobantePago{}, []ComentarioComprobantePago{}
 
 			for rows.Next() {
 				err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
-				utils.LogError("Problemas leer los estados: ", err)
+				utils.LogError("Problemas leer los estados: (Comprobante de pago) ", true, err)
 				comentarios = append(comentarios, ComentarioComprobantePago{
 					ID:            comentario.ID,
 					Estado:        comentario.Estado,
@@ -91,7 +91,7 @@ func VerComprobantePago(id int) ComprobantePago {
 		&comprobantePago.FechaRegistro,
 		&comprobantePago.Estado,
 	)
-	utils.LogError("Problemas al leer registro: ", err)
+	utils.LogError("Problemas al leer registro: (Comprobante de pago) ", false, err)
 
 	return comprobantePago
 }
@@ -101,7 +101,7 @@ func ListarComprobantePago() []ComprobantePago {
 	defer connMySQL.Close()
 
 	rows, err := connMySQL.Query("SELECT a.*, IFNULL((SELECT estado FROM formulario_comentarios WHERE formulario = 'formulario_comprobantepago' AND idFormulario = a.id ORDER BY fechaRegistro DESC LIMIT 1), 'pendiente') AS estado FROM formulario_comprobantepago AS a;")
-	utils.LogError("Problemas al listar los registros de la base de datos: ", err)
+	utils.LogError("Problemas al listar los registros de la base de datos: (Comprobante de pago) ", true, err)
 	defer rows.Close()
 
 	cp := ComprobantePago{}
@@ -109,7 +109,7 @@ func ListarComprobantePago() []ComprobantePago {
 
 	for rows.Next() {
 		err := rows.Scan(&cp.ID, &cp.Nombre, &cp.Apellido, &cp.Cedula, &cp.Correo, &cp.Telefono, &cp.ComprobantePago, &cp.FechaRegistro, &cp.Estado)
-		utils.LogError("Problemas leer los datos: ", err)
+		utils.LogError("Problemas leer los datos: (Comprobante de pago) ", true, err)
 		cps = append(cps, ComprobantePago{
 			ID:              cp.ID,
 			Nombre:          cp.Nombre,
@@ -124,14 +124,14 @@ func ListarComprobantePago() []ComprobantePago {
 				consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_comprobantepago", cp.ID)
 
 				rows, err := connMySQL.Query(consulta)
-				utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+				utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: (Comprobante de pago) ", true, err)
 				defer rows.Close()
 
 				comentario, comentarios := ComentarioComprobantePago{}, []ComentarioComprobantePago{}
 
 				for rows.Next() {
 					err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
-					utils.LogError("Problemas leer los estados: ", err)
+					utils.LogError("Problemas leer los estados: (Comprobante de pago) ", true, err)
 					comentarios = append(comentarios, ComentarioComprobantePago{
 						ID:            comentario.ID,
 						Estado:        comentario.Estado,
@@ -165,7 +165,7 @@ func CrearComprobantePago(nombre, apellido, cedula, correo, telefono, comprobant
 	defer connMySQL.Close()
 
 	conn, err := connMySQL.Prepare("INSERT INTO formulario_comprobantepago (nombre, apellido, cedula, correo, telefono, comprobantePago, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?)")
-	utils.LogError("Problemas al crear el registro en la base de datos: ", err)
+	utils.LogError("Problemas al crear el registro en la base de datos: (Comprobante de pago) ", true, err)
 	defer conn.Close()
 
 	conn.Exec(cp.Nombre, cp.Apellido, cp.Cedula, cp.Correo, cp.Telefono, cp.ComprobantePago, cp.FechaRegistro)
@@ -188,7 +188,7 @@ func CrearComentarioComprobantePago(estado, comentario, formulario, usuario, cor
 	defer connMySQL.Close()
 
 	conn, err := connMySQL.Prepare("INSERT INTO formulario_comentarios (estado, comentario, formulario, usuario, correoUsuario, idFormulario, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?)")
-	utils.LogError("Problemas al crear el estado en la base de datos: ", err)
+	utils.LogError("Problemas al crear el estado en la base de datos: (Comprobante de pago) ", false, err)
 	defer conn.Close()
 
 	conn.Exec(comprobantePago.Estado, comprobantePago.Comentario, comprobantePago.Formulario, comprobantePago.Usuario, comprobantePago.CorreoUsuario, comprobantePago.IDFormulario, comprobantePago.FechaRegistro)

@@ -17,7 +17,7 @@ func Configuracion() {
 	}
 }
 
-func LogError(m string, e error) {
+func LogError(m string, n bool, e error) {
 	Configuracion()
 	f, err := os.OpenFile("./log.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -27,8 +27,11 @@ func LogError(m string, e error) {
 	log.SetOutput(f)
 
 	if e != nil {
-		log.Printf(m+" %v", e)
-		notificacion(m, e)
+		fmt.Printf(m+" %v", e)
+		if n {
+			log.Printf(m+" %v", e)
+			notificacion(m, e)
+		}
 	}
 }
 

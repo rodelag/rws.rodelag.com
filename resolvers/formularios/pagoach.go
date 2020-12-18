@@ -46,7 +46,7 @@ func conexionPagoACH() *sql.DB {
 	)
 	connMySQL, errMySQL := sql.Open("mysql", connStringMySQL)
 	if errMySQL != nil {
-		utils.LogError("Problemas con la conexion a mysql: ", errMySQL)
+		utils.LogError("Problemas con la conexion a mysql: (Pago ACH) ", true, errMySQL)
 	}
 	return connMySQL
 }
@@ -60,14 +60,14 @@ func VerPagoACH(id int) PagoACH {
 			consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_pagosach", id)
 
 			rows, err := connMySQL.Query(consulta)
-			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: (Pago ACH) ", false, err)
 			defer rows.Close()
 
 			comentario, comentarios := ComentarioPagoACH{}, []ComentarioPagoACH{}
 
 			for rows.Next() {
 				err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
-				utils.LogError("Problemas leer los estados: ", err)
+				utils.LogError("Problemas leer los estados: (Pago ACH) ", false, err)
 				comentarios = append(comentarios, ComentarioPagoACH{
 					ID:            comentario.ID,
 					Estado:        comentario.Estado,
@@ -97,7 +97,7 @@ func VerPagoACH(id int) PagoACH {
 		&pagoACH.FechaRegistro,
 		&pagoACH.Estado,
 	)
-	utils.LogError("Problemas al leer registro: ", err)
+	utils.LogError("Problemas al leer registro: (Pago ACH) ", false, err)
 
 	return pagoACH
 }
@@ -107,7 +107,7 @@ func ListarPagoACH() []PagoACH {
 	defer connMySQL.Close()
 
 	rows, err := connMySQL.Query("SELECT a.*, IFNULL((SELECT estado FROM formulario_comentarios WHERE formulario = 'formulario_pagosach' AND idFormulario = a.id ORDER BY fechaRegistro DESC LIMIT 1), 'pendiente') AS estado FROM formulario_pagosach AS a;")
-	utils.LogError("Problemas al listar los registros de la base de datos: ", err)
+	utils.LogError("Problemas al listar los registros de la base de datos: (Pago ACH) ", true, err)
 	defer rows.Close()
 
 	pagoACH := PagoACH{}
@@ -115,7 +115,7 @@ func ListarPagoACH() []PagoACH {
 
 	for rows.Next() {
 		err := rows.Scan(&pagoACH.ID, &pagoACH.Nombre, &pagoACH.Apellido, &pagoACH.TitularCuenta, &pagoACH.Cedula, &pagoACH.Correo, &pagoACH.Telefono, &pagoACH.CompraOrigen, &pagoACH.NumeroOrden, &pagoACH.FotoComprobante, &pagoACH.FechaRegistro, &pagoACH.Estado)
-		utils.LogError("Problemas leer los datos: ", err)
+		utils.LogError("Problemas leer los datos: (Pago ACH) ", true, err)
 		pagosACH = append(pagosACH, PagoACH{
 			ID:              pagoACH.ID,
 			Nombre:          pagoACH.Nombre,
@@ -133,14 +133,14 @@ func ListarPagoACH() []PagoACH {
 				consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_pagosach", pagoACH.ID)
 
 				rows, err := connMySQL.Query(consulta)
-				utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+				utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: (Pago ACH) ", true, err)
 				defer rows.Close()
 
 				comentario, comentarios := ComentarioPagoACH{}, []ComentarioPagoACH{}
 
 				for rows.Next() {
 					err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
-					utils.LogError("Problemas leer los estados: ", err)
+					utils.LogError("Problemas leer los estados: (Pago ACH) ", true, err)
 					comentarios = append(comentarios, ComentarioPagoACH{
 						ID:            comentario.ID,
 						Estado:        comentario.Estado,
@@ -177,7 +177,7 @@ func CrearPagoACH(nombre, apellido, titularCuenta, cedula, correo, telefono, com
 	defer connMySQL.Close()
 
 	conn, err := connMySQL.Prepare("INSERT INTO formulario_pagosach (nombre, apellido, titularCuenta, cedula, correo, telefono, compraOrigen, numeroOrden, fotoComprobante, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
-	utils.LogError("Problemas al crear el registro en la base de datos: ", err)
+	utils.LogError("Problemas al crear el registro en la base de datos: (Pago ACH) ", false, err)
 	defer conn.Close()
 
 	conn.Exec(pagosACH.Nombre, pagosACH.Apellido, pagosACH.TitularCuenta, pagosACH.Cedula, pagosACH.Correo, pagosACH.Telefono, pagosACH.CompraOrigen, pagosACH.NumeroOrden, pagosACH.FotoComprobante, pagosACH.FechaRegistro)
@@ -200,7 +200,7 @@ func CrearComentarioPagoACH(estado, comentario, formulario, usuario, correoUsuar
 	defer connMySQL.Close()
 
 	conn, err := connMySQL.Prepare("INSERT INTO formulario_comentarios (estado, comentario, formulario, usuario, correoUsuario, idFormulario, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?)")
-	utils.LogError("Problemas al crear el estado en la base de datos: ", err)
+	utils.LogError("Problemas al crear el estado en la base de datos: (Pago ACH) ", false, err)
 	defer conn.Close()
 
 	conn.Exec(comentarioPagoACH.Estado, comentarioPagoACH.Comentario, comentarioPagoACH.Formulario, comentarioPagoACH.Usuario, comentarioPagoACH.CorreoUsuario, comentarioPagoACH.IDFormulario, comentarioPagoACH.FechaRegistro)

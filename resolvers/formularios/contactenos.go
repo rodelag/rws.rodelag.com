@@ -42,7 +42,7 @@ func conexionContactenos() *sql.DB {
 	)
 	connMySQL, errMySQL := sql.Open("mysql", connStringMySQL)
 	if errMySQL != nil {
-		utils.LogError("Problemas con la conexion a mysql: ", errMySQL)
+		utils.LogError("Problemas con la conexion a mysql: (Contactenos) ", true, errMySQL)
 	}
 	return connMySQL
 }
@@ -56,14 +56,14 @@ func VerContactenos(id int) Contactenos {
 			consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_contactenos", id)
 
 			rows, err := connMySQL.Query(consulta)
-			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: (Contactenos) ", true, err)
 			defer rows.Close()
 
 			comentario, comentarios := ComentarioContactenos{}, []ComentarioContactenos{}
 
 			for rows.Next() {
 				err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
-				utils.LogError("Problemas leer los estados: ", err)
+				utils.LogError("Problemas leer los estados: (Contactenos) ", false, err)
 				comentarios = append(comentarios, ComentarioContactenos{
 					ID:            comentario.ID,
 					Estado:        comentario.Estado,
@@ -89,7 +89,7 @@ func VerContactenos(id int) Contactenos {
 		&reg.FechaRegistro,
 		&reg.Estado,
 	)
-	utils.LogError("Problemas al leer registro: ", err)
+	utils.LogError("Problemas al leer registro: (Contactenos) ", false, err)
 	return reg
 }
 
@@ -98,7 +98,7 @@ func ListarContactenos() []Contactenos {
 	defer connMySQL.Close()
 
 	rows, err := connMySQL.Query("SELECT a.*, IFNULL((SELECT estado FROM formulario_comentarios WHERE formulario = 'formulario_contactenos' AND idFormulario = a.id ORDER BY fechaRegistro DESC LIMIT 1), 'pendiente') AS estado FROM formulario_contactenos AS a;")
-	utils.LogError("Problemas al listar los registros de la base de datos: ", err)
+	utils.LogError("Problemas al listar los registros de la base de datos: (Contactenos) ", true, err)
 	defer rows.Close()
 
 	ct := Contactenos{}
@@ -115,7 +115,7 @@ func ListarContactenos() []Contactenos {
 			&ct.FechaRegistro,
 			&ct.Estado,
 		)
-		utils.LogError("Problemas leer los datos: ", err)
+		utils.LogError("Problemas leer los datos: (Contactenos) ", true, err)
 		cts = append(cts, Contactenos{
 			ID:            ct.ID,
 			Nombre:        ct.Nombre,
@@ -129,14 +129,14 @@ func ListarContactenos() []Contactenos {
 				consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_contactenos", ct.ID)
 
 				rows, err := connMySQL.Query(consulta)
-				utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+				utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: (Contactenos) ", true, err)
 				defer rows.Close()
 
 				comentario, comentarios := ComentarioContactenos{}, []ComentarioContactenos{}
 
 				for rows.Next() {
 					err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
-					utils.LogError("Problemas leer los estados: ", err)
+					utils.LogError("Problemas leer los estados: (Contactenos) ", true, err)
 					comentarios = append(comentarios, ComentarioContactenos{
 						ID:            comentario.ID,
 						Estado:        comentario.Estado,
@@ -169,7 +169,7 @@ func CrearContactenos(nombre, apellido, correo, telefono, mensaje string) Contac
 	defer connMySQL.Close()
 
 	conn, err := connMySQL.Prepare("INSERT INTO formulario_contactenos (nombre, apellido, correo, telefono, mensaje, FechaRegistro) VALUES (?, ?, ?, ?, ?, ?)")
-	utils.LogError("Problemas al crear el registro en la base de datos: ", err)
+	utils.LogError("Problemas al crear el registro en la base de datos: (Contactenos) ", true, err)
 	defer conn.Close()
 
 	conn.Exec(
@@ -199,7 +199,7 @@ func CrearComentarioContactenos(estado, comentario, formulario, usuario, correoU
 	defer connMySQL.Close()
 
 	conn, err := connMySQL.Prepare("INSERT INTO formulario_comentarios (estado, comentario, formulario, usuario, correoUsuario, idFormulario, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?)")
-	utils.LogError("Problemas al crear el estado en la base de datos: ", err)
+	utils.LogError("Problemas al crear el estado en la base de datos: (Contactenos) ", true, err)
 	defer conn.Close()
 
 	conn.Exec(c.Estado, c.Comentario, c.Formulario, c.Usuario, c.CorreoUsuario, c.IDFormulario, c.FechaRegistro)

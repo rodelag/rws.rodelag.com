@@ -44,7 +44,7 @@ func conexionPrevencionFraude() *sql.DB {
 	)
 	connMySQL, errMySQL := sql.Open("mysql", connStringMySQL)
 	if errMySQL != nil {
-		utils.LogError("Problemas con la conexion a mysql: ", errMySQL)
+		utils.LogError("Problemas con la conexion a mysql: (Prevencion Fraude) ", true, errMySQL)
 	}
 	return connMySQL
 }
@@ -58,14 +58,14 @@ func VerPrevencionFraude(id int) PrevencionFraude {
 			consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_prevencionfraude", id)
 
 			rows, err := connMySQL.Query(consulta)
-			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: (Prevencion Fraude) ", false, err)
 			defer rows.Close()
 
 			comentario, comentarios := ComentarioPrevencionFraude{}, []ComentarioPrevencionFraude{}
 
 			for rows.Next() {
 				err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
-				utils.LogError("Problemas leer los estados: ", err)
+				utils.LogError("Problemas leer los estados: (Prevencion Fraude) ", false, err)
 				comentarios = append(comentarios, ComentarioPrevencionFraude{
 					ID:            comentario.ID,
 					Estado:        comentario.Estado,
@@ -93,7 +93,7 @@ func VerPrevencionFraude(id int) PrevencionFraude {
 		&reg.FechaRegistro,
 		&reg.Estado,
 	)
-	utils.LogError("Problemas al leer registro: ", err)
+	utils.LogError("Problemas al leer registro: (Prevencion Fraude) ", false, err)
 	return reg
 }
 
@@ -102,7 +102,7 @@ func ListarPrevencionFraude() []PrevencionFraude {
 	defer connMySQL.Close()
 
 	rows, err := connMySQL.Query("SELECT a.*, IFNULL((SELECT estado FROM formulario_comentarios WHERE formulario = 'formulario_prevencionfraude' AND idFormulario = a.id ORDER BY fechaRegistro DESC LIMIT 1), 'pendiente') AS estado FROM formulario_prevencionfraude AS a;")
-	utils.LogError("Problemas al listar los registros de la base de datos: ", err)
+	utils.LogError("Problemas al listar los registros de la base de datos: (Prevencion Fraude) ", true, err)
 	defer rows.Close()
 
 	pf := PrevencionFraude{}
@@ -121,7 +121,7 @@ func ListarPrevencionFraude() []PrevencionFraude {
 			&pf.FechaRegistro,
 			&pf.Estado,
 		)
-		utils.LogError("Problemas leer los datos: ", err)
+		utils.LogError("Problemas leer los datos: (Prevencion Fraude) ", true, err)
 		pfs = append(pfs, PrevencionFraude{
 			ID:              pf.ID,
 			Nombre:          pf.Nombre,
@@ -137,14 +137,14 @@ func ListarPrevencionFraude() []PrevencionFraude {
 				consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_prevencionfraude", pf.ID)
 
 				rows, err := connMySQL.Query(consulta)
-				utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: ", err)
+				utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: (Prevencion Fraude) ", true, err)
 				defer rows.Close()
 
 				comentario, comentarios := ComentarioPrevencionFraude{}, []ComentarioPrevencionFraude{}
 
 				for rows.Next() {
 					err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
-					utils.LogError("Problemas leer los estados: ", err)
+					utils.LogError("Problemas leer los estados: (Prevencion Fraude) ", true, err)
 					comentarios = append(comentarios, ComentarioPrevencionFraude{
 						ID:            comentario.ID,
 						Estado:        comentario.Estado,
@@ -179,7 +179,7 @@ func CrearPrevencionFraude(nombre, apellido, fechaNacimiento, lugarResidencia, c
 	defer connMySQL.Close()
 
 	conn, err := connMySQL.Prepare("INSERT INTO formulario_prevencionfraude (nombre, apellido, fechaNacimiento, lugarResidencia, celular, fotoCedula, fotoTarjeta, FechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-	utils.LogError("Problemas al crear el registro en la base de datos: ", err)
+	utils.LogError("Problemas al crear el registro en la base de datos: (Prevencion Fraude) ", false, err)
 	defer conn.Close()
 
 	conn.Exec(
@@ -211,7 +211,7 @@ func CrearComentarioPrevencionFraude(estado, comentario, formulario, usuario, co
 	defer connMySQL.Close()
 
 	conn, err := connMySQL.Prepare("INSERT INTO formulario_comentarios (estado, comentario, formulario, usuario, correoUsuario, idFormulario, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?)")
-	utils.LogError("Problemas al crear el estado en la base de datos: ", err)
+	utils.LogError("Problemas al crear el estado en la base de datos: (Prevencion Fraude) ", false, err)
 	defer conn.Close()
 
 	conn.Exec(c.Estado, c.Comentario, c.Formulario, c.Usuario, c.CorreoUsuario, c.IDFormulario, c.FechaRegistro)

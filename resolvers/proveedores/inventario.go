@@ -39,7 +39,7 @@ func conexionProveedorInventario() *sql.DB {
 	)
 	connMySQL, errMySQL := sql.Open("mysql", connStringMySQL)
 	if errMySQL != nil {
-		utils.LogError("Problemas con la conexion a mysql: ", errMySQL)
+		utils.LogError("Problemas con la conexion a mysql: (ProveedorInventario) ", true, errMySQL)
 	}
 	return connMySQL
 }
@@ -49,14 +49,14 @@ func ListarProveedorInventario(sucursal, proveedor, proveedorID, campo, condicio
 	defer connMySQL.Close()
 
 	rows, err := connMySQL.Query(consulta(sucursal, proveedor, proveedorID, campo, condicion, campo2, condicion2, cursor, limite))
-	utils.LogError("Problemas al listar los registros de la base de datos: ", err)
+	utils.LogError("Problemas al listar los registros de la base de datos: (ProveedorInventario) ", false, err)
 	defer rows.Close()
 
 	pi, psi := ProveedorInventario{}, []ProveedorInventario{}
 
 	for rows.Next() {
 		err := rows.Scan(&pi.Consecutivo, &pi.NomSuc, &pi.Depto, &pi.Categ, &pi.Parte, &pi.Codigo, &pi.Descripcion, &pi.PreReg, &pi.Oferta, &pi.Exist, &pi.Marca, &pi.OfeIni, &pi.OfeFin, &pi.ProvIDElconix, &pi.NomProv, &pi.ProvID, &pi.CategID)
-		utils.LogError("Problemas leer los datos: ", err)
+		utils.LogError("Problemas leer los datos: (ProveedorInventario) ", false, err)
 		psi = append(psi, ProveedorInventario{
 			Consecutivo:   pi.Consecutivo,
 			NomSuc:        pi.NomSuc,

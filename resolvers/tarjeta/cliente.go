@@ -66,7 +66,7 @@ func conexionTarjeta() *sql.DB {
 	)
 	connMySQL, errMySQL := sql.Open("mysql", connStringMySQL)
 	if errMySQL != nil {
-		utils.LogError("Problemas con la conexion a mysql: ", errMySQL)
+		utils.LogError("Problemas con la conexion a mysql: (Tarjeta) ", true, errMySQL)
 	}
 	return connMySQL
 }
@@ -78,7 +78,7 @@ func ClienteTarjetaRodelag(cedula string) Cliente {
 	cliente := Cliente{
 		RegistroEstadoCuentaDetalle: func() []EstadoCuentaDetalle {
 			rows, err := connMySQL.Query(consultaEstadoCuentaDetalle(cedula))
-			utils.LogError("Problemas al leer registro del detalle del estado de cuenta: ", err)
+			utils.LogError("Problemas al leer registro del detalle del estado de cuenta: (Tarjeta) ", false, err)
 			defer rows.Close()
 
 			d, detalle := EstadoCuentaDetalle{}, []EstadoCuentaDetalle{}
@@ -92,7 +92,7 @@ func ClienteTarjetaRodelag(cedula string) Cliente {
 					&d.RegistroCredito,
 					&d.RegistroSaldo,
 				)
-				utils.LogError("Problemas al iterar los registro del detalle del estado de cuenta: ", err)
+				utils.LogError("Problemas al iterar los registro del detalle del estado de cuenta: (Tarjeta) ", false, err)
 				detalle = append(detalle, EstadoCuentaDetalle{
 					RegistroFechaTran:            d.RegistroFechaTran,
 					RegistroNumeroDocumento:      d.RegistroNumeroDocumento,
@@ -143,7 +143,7 @@ func ClienteTarjetaRodelag(cedula string) Cliente {
 		&cliente.RegistroSaldo120Dias,
 		&cliente.RegistroFechaFinPago,
 	)
-	utils.LogError("Problemas al leer registro: ", err)
+	utils.LogError("Problemas al leer registro: (Tarjeta) ", false, err)
 
 	return cliente
 }

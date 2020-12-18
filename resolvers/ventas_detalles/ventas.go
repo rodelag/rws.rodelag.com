@@ -45,7 +45,7 @@ func conexionVentas() *sql.DB {
 	)
 	connMySQL, errMySQL := sql.Open("mysql", connStringMySQL)
 	if errMySQL != nil {
-		utils.LogError("Problemas con la conexion a mysql: ", errMySQL)
+		utils.LogError("Problemas con la conexion a mysql: (Ventas) ", true, errMySQL)
 	}
 	return connMySQL
 }
@@ -55,7 +55,7 @@ func ListarVentas(inicio, fin string) []Venta {
 	defer connMySQL.Close()
 
 	rows, err := connMySQL.Query(consulta(inicio, fin))
-	utils.LogError("Problemas al listar los registros de la base de datos: ", err)
+	utils.LogError("Problemas al listar los registros de la base de datos: (Ventas) ", false, err)
 	defer rows.Close()
 
 	con, cons := Venta{}, []Venta{}
@@ -87,7 +87,7 @@ func ListarVentas(inicio, fin string) []Venta {
 			&con.RegistroProveedor,
 			&con.RegistroListaPrecio,
 		)
-		utils.LogError("Problemas leer los datos: ", err)
+		utils.LogError("Problemas leer los datos: (Ventas) ", false, err)
 		cons = append(cons, Venta{
 			RegistroFecha:        con.RegistroFecha,
 			RegistroSucursal:     con.RegistroSucursal,
