@@ -188,7 +188,7 @@ func consultaCliente(cedula string) string {
 			estadoCuenta.registroFechaFinPago
 		FROM
 			rodelag_tarjetarodelag.saldo AS saldo
-			INNER JOIN rodelag_tarjetarodelag.estadoCuenta AS estadoCuenta
+			LEFT JOIN rodelag_tarjetarodelag.estadoCuenta AS estadoCuenta
 				ON saldo.registroCedula = estadoCuenta.registroIdentificacion
 		WHERE
 			saldo.registroCedula = '%s'
