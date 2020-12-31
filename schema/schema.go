@@ -5,6 +5,7 @@ import (
 	"rws/schema/central"
 	"rws/schema/conteo"
 	"rws/schema/formularios"
+	"rws/schema/inventario"
 	"rws/schema/proveedores"
 	"rws/schema/tarjeta"
 	"rws/schema/ventas_detalles"
@@ -74,6 +75,9 @@ func init() {
 
 			//Ventas de Rodelag
 			"ventas_listar": ventas_detalles.VentasDetallesQuery()["ventas_listar"],
+
+			//Inventario de Rodelag
+			"inventario_listar": inventario.InventarioQuery()["inventario_listar"],
 		},
 	})
 
