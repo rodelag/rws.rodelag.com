@@ -83,22 +83,22 @@ func consulta(busqueda string) string {
 	// TODO: Estar pendiente del rendimiento de esta consulta... se le puso un límite de 100 y trabajar más adelante en una paginación.
 	consulta := `
 		SELECT
-			WareHouse AS Suc,
-			Category AS Departamento,
-			b.Item_Number AS Codigo,
-			Nombre AS Descripcion,
-			Get_Price(b.id, '') AS Precio,
-			a.InStock AS Cant,
-			Ifnull(products.part_number,products.codigo_externo) AS Parte,
-			Marca,
-			IFNULL((select NewPrice from promotions p join promotions_products pp on p.id =pp.Promotion  where CodeType =b.id and pricelist ='PRECIO REGULAR' and expira >CURDATE() order by expira desc limit 1)  ,0) AS Oferta,
-			IFNULL((select Fecha_Inicio from promotions p join promotions_products pp on p.id =pp.Promotion where CodeType =b.id and pricelist ='PRECIO REGULAR' and expira >CURDATE() order by expira desc limit 1)  ,'') AS FecIni,
-			IFNULL((select Expira from promotions p join promotions_products pp on p.id =pp.Promotion where CodeType =b.id and pricelist ='PRECIO REGULAR' and expira >CURDATE() order by expira desc limit 1)  ,'') AS FecFin
+		   WareHouse AS Suc,
+		   Category AS Departamento,
+		   b.Item_Number AS Codigo,
+		   Nombre AS Descripcion,
+		   Get_Price(b.id, '') AS Precio,
+		   a.InStock AS Cant,
+		   IFNULL(part_number, codigo_externo) AS Parte,
+		   Marca,
+		   IFNULL((select NewPrice from promotions p join promotions_products pp on p.id =pp.Promotion  where CodeType =b.id and pricelist ='PRECIO REGULAR' and expira >CURDATE() order by expira desc limit 1)  ,0) AS Oferta,
+		   IFNULL((select Fecha_Inicio from promotions p join promotions_products pp on p.id =pp.Promotion where CodeType =b.id and pricelist ='PRECIO REGULAR' and expira >CURDATE() order by expira desc limit 1)  ,'') AS FecIni,
+		   IFNULL((select Expira from promotions p join promotions_products pp on p.id =pp.Promotion where CodeType =b.id and pricelist ='PRECIO REGULAR' and expira >CURDATE() order by expira desc limit 1)  ,'') AS FecFin
 		FROM
-			enx_rodelag.products_mview_instock_actualizado AS a
-				 INNER JOIN products AS b ON a.Item = b.ID
-		WHERE
-			CONCAT_WS('', b.Item_Number, Nombre) LIKE '%%%s%%' AND Status ='ACTIVO' LIMIT 100;
+		   enx_rodelag.products_mview_instock_actualizado AS a
+			   INNER JOIN products AS b ON a.Item = b.ID
+		WHERE WareHouse not like('bodega%%') and WareHouse not like ('inco%%') and WareHouse not like ('%%out%%') and -- a.InStock >0 and   
+		   CONCAT_WS('', b.Item_Number, Nombre) LIKE '%%%s%%' AND Status ='ACTIVO' LIMIT 100;
 	`
 	return fmt.Sprintf(consulta, busqueda)
 }

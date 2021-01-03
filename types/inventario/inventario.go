@@ -32,7 +32,7 @@ var InventarioType = graphql.NewObject(graphql.ObjectConfig{
 		},
 		"Parte": &graphql.Field{
 			Type:        graphql.String,
-			Description: "número de parte",
+			Description: "Numero de parte",
 		},
 		"Marca": &graphql.Field{
 			Type:        graphql.String,
