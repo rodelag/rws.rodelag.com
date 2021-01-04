@@ -6,7 +6,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/viper"
 	"rws/utils"
-	"strings"
 )
 
 type Inventario struct {
@@ -98,9 +97,9 @@ func consulta(busqueda string) string {
 		FROM
 		   enx_rodelag.products_mview_instock_actualizado AS a
 			   INNER JOIN products AS b ON a.Item = b.ID
-		WHERE WareHouse not like('bodega%%') and WareHouse not like ('inco%%') and WareHouse not like ('%%out%%') and -- a.InStock >0 and  
+		WHERE WareHouse not like('bodega%%') and WareHouse not like ('inco%%') and WareHouse not like ('%%out%%') and a.sucursal <>'Ventas Comerciales' and  
 			  CONCAT(replace(replace(replace(REPLACE(nombre,'  ',' '),'  ',' '),'  ',' '),'"',''),b.Item_Number) LIKE '%%%s%%' AND Status ='ACTIVO'     
 			  LIMIT 100;
 	`
-	return fmt.Sprintf(consulta, strings.Replace(busqueda, "\"", "", -1))
+	return fmt.Sprintf(consulta, busqueda)
 }
