@@ -98,7 +98,7 @@ func consulta(busqueda string) string {
 		   enx_rodelag.products_mview_instock_actualizado AS a
 			   INNER JOIN products AS b ON a.Item = b.ID
 		WHERE WareHouse not like('bodega%%') and WareHouse not like ('inco%%') and WareHouse not like ('%%out%%') and a.sucursal <>'Ventas Comerciales' and  
-			  CONCAT(replace(replace(replace(REPLACE(nombre,'  ',' '),'  ',' '),'  ',' '),'"',''),b.Item_Number) LIKE '%%%s%%' AND Status ='ACTIVO'     
+			  CONCAT(replace(replace(replace(REPLACE(nombre,'  ',' '),'  ',' '),'  ',' '),'"',''), b.Item_Number, IFNULL(part_number, codigo_externo)) LIKE '%%%s%%' AND Status ='ACTIVO'     
 			  LIMIT 100;
 	`
 	return fmt.Sprintf(consulta, busqueda)
