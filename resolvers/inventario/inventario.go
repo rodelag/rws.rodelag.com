@@ -83,12 +83,12 @@ func consulta(busqueda string) string {
 	// TODO: Estar pendiente del rendimiento de esta consulta... se le puso un límite de 100 y trabajar más adelante en una paginación.
 	consulta := `
 		SELECT
-		   WareHouse AS Suc,
+		   Case When a.WareHouse ='HERMINIA' Then 'Bodega-CEDI' Else a.WareHouse End AS Suc,
 		   Category AS Departamento,
 		   b.Item_Number AS Codigo,
-		   Nombre AS Descripcion,
+		   b.Nombre AS Descripcion,
 		   Get_Price(b.id, '') AS Precio,
-		   a.InStock AS Cant,
+		   Get_avialable(b.ID,a.WareHouse,'') Cant,  
 		   IFNULL(part_number, codigo_externo) AS Parte,
 		   Marca,
 		   IFNULL((select NewPrice from promotions p join promotions_products pp on p.id =pp.Promotion  where CodeType =b.id and pricelist ='PRECIO REGULAR' and expira >CURDATE() order by expira desc limit 1)  ,0) AS Oferta,
@@ -96,10 +96,11 @@ func consulta(busqueda string) string {
 		   IFNULL((select Expira from promotions p join promotions_products pp on p.id =pp.Promotion where CodeType =b.id and pricelist ='PRECIO REGULAR' and expira >CURDATE() order by expira desc limit 1)  ,'') AS FecFin
 		FROM
 		   enx_rodelag.products_mview_instock_actualizado AS a
-			   INNER JOIN products AS b ON a.Item = b.ID
-		WHERE WareHouse not like('bodega%%') and WareHouse not like ('inco%%') and WareHouse not like ('%%out%%') and a.sucursal <>'Ventas Comerciales' and  
-			  CONCAT(replace(replace(replace(REPLACE(nombre,'  ',' '),'  ',' '),'  ',' '),'"',''), b.Item_Number, IFNULL(part_number, codigo_externo)) LIKE '%%%s%%' AND Status ='ACTIVO'     
-			  LIMIT 100;
+		   INNER JOIN products AS b ON a.Item = b.ID
+		   inner join warehouses w2 on a.WareHouse =w2.nombre
+		WHERE a.WareHouse not like('bodega%%') and WareHouse not like ('inco%%') and WareHouse not like ('%%out%%') and WareHouse not like ('obso%%') and      
+			 CONCAT(replace(replace(replace(REPLACE(b.nombre,'  ',' '),'  ',' '),'  ',' '),'"',''), b.Item_Number, IFNULL(part_number, codigo_externo)) LIKE '%%%s%%' AND b.Status ='ACTIVO'    
+			 LIMIT 100;
 	`
 	return fmt.Sprintf(consulta, busqueda)
 }

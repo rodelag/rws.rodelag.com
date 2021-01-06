@@ -6,6 +6,7 @@ import (
 	"rws/schema/conteo"
 	"rws/schema/formularios"
 	"rws/schema/inventario"
+	"rws/schema/inventario_actualizado"
 	"rws/schema/proveedores"
 	"rws/schema/tarjeta"
 	"rws/schema/ventas_detalles"
@@ -78,6 +79,13 @@ func init() {
 
 			//Inventario de Rodelag
 			"inventario_listar": inventario.InventarioQuery()["inventario_listar"],
+
+			//Inventario Actualizado de Rodelag
+			"inventario_actualizado_detalle_listar":       inventario_actualizado.InventarioActualizadoQuery()["inventario_actualizado_detalle_listar"],
+			"inventario_actualizado_tiendas_listar":       inventario_actualizado.InventarioActualizadoQuery()["inventario_actualizado_tiendas_listar"],
+			"inventario_actualizado_departamentos_listar": inventario_actualizado.InventarioActualizadoQuery()["inventario_actualizado_departamentos_listar"],
+			"inventario_actualizado_categorias_listar":    inventario_actualizado.InventarioActualizadoQuery()["inventario_actualizado_categorias_listar"],
+			"inventario_actualizado_producto_listar":      inventario_actualizado.InventarioActualizadoQuery()["inventario_actualizado_producto_listar"],
 		},
 	})
 
