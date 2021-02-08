@@ -191,9 +191,9 @@ func consultaCliente(cedula string) string {
 			LEFT JOIN rodelag_tarjetarodelag.estadoCuenta AS estadoCuenta
 				ON saldo.registroCedula = estadoCuenta.registroIdentificacion
 		WHERE
-			saldo.registroCedula = '%s'
+			saldo.registroCedula = '%s' OR saldo.registroCuenta = '%s'
 	`
-	return fmt.Sprintf(consulta, cedula)
+	return fmt.Sprintf(consulta, cedula, cedula)
 }
 
 func consultaEstadoCuentaDetalle(cedula string) string {
@@ -208,7 +208,7 @@ func consultaEstadoCuentaDetalle(cedula string) string {
 		FROM
 			rodelag_tarjetarodelag.estadoCuenta
 		WHERE
-			registroIdentificacion = '%s'
+			registroIdentificacion = '%s' OR registroNumeroCuenta = '%s' 
 	`
-	return fmt.Sprintf(consulta, cedula)
+	return fmt.Sprintf(consulta, cedula, cedula)
 }
