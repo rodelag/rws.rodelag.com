@@ -148,6 +148,83 @@ func ClienteTarjetaRodelag(cedula string) Cliente {
 	return cliente
 }
 
+func ClienteTarjetaRodelagCedulaCuenta(cedula, cuenta string) Cliente {
+	connMySQL := conexionTarjeta()
+	defer connMySQL.Close()
+
+	cliente := Cliente{
+		RegistroEstadoCuentaDetalle: func() []EstadoCuentaDetalle {
+			rows, err := connMySQL.Query(consultaEstadoCuentaDetalleCedulaCuenta(cedula, cuenta))
+			utils.LogError("Problemas al leer registro del detalle del estado de cuenta: (Tarjeta) ", false, err)
+			defer rows.Close()
+
+			d, detalle := EstadoCuentaDetalle{}, []EstadoCuentaDetalle{}
+
+			for rows.Next() {
+				err := rows.Scan(
+					&d.RegistroFechaTran,
+					&d.RegistroNumeroDocumento,
+					&d.RegistroDescripcionDocumento,
+					&d.RegistroDebito,
+					&d.RegistroCredito,
+					&d.RegistroSaldo,
+				)
+				utils.LogError("Problemas al iterar los registro del detalle del estado de cuenta: (Tarjeta) ", false, err)
+				detalle = append(detalle, EstadoCuentaDetalle{
+					RegistroFechaTran:            d.RegistroFechaTran,
+					RegistroNumeroDocumento:      d.RegistroNumeroDocumento,
+					RegistroDescripcionDocumento: d.RegistroDescripcionDocumento,
+					RegistroDebito:               d.RegistroDebito,
+					RegistroCredito:              d.RegistroCredito,
+					RegistroSaldo:                d.RegistroSaldo,
+				})
+			}
+			return detalle
+		}(),
+	}
+
+	err := connMySQL.QueryRow(consultaClienteCedulaCuenta(cedula, cuenta)).Scan(
+		&cliente.RegistroCedula,
+		&cliente.RegistroCuenta,
+		&cliente.RegistroNombre,
+		&cliente.RegistroLimite,
+		&cliente.RegistroUltimoSaldo,
+		&cliente.RegistroFechaUltimaCompra,
+		&cliente.RegistroMontoUltimaCompra,
+		&cliente.RegistroFechaApertura,
+		&cliente.RegistroFechaCorte,
+		&cliente.RegistroPagarAntesDe,
+		&cliente.RegistroCorte,
+		&cliente.RegistroEstado,
+		&cliente.RegistroFechaUltimoPago,
+		&cliente.RegistroMontoUltimoPago,
+		&cliente.RegistroPagoMinimo,
+		&cliente.RegistroCorreo,
+		&cliente.RegistroTelefono,
+		&cliente.RegistroFechaNacimiento,
+		&cliente.RegistroSexo,
+		&cliente.RegistroSucursal,
+		&cliente.RegistroTipoCliente,
+		&cliente.RegistroFechaEstoCuenta,
+		&cliente.RegistroNumeroCuenta,
+		&cliente.RegistroLimiteCreditoEstadoCuenta,
+		&cliente.RegistroSaldoDisponible,
+		&cliente.RegistroFechaInicioTran,
+		&cliente.RegistroFechaFinTran,
+		&cliente.RegistroSaldoAnterior,
+		&cliente.RegistroPagoMinimoEstadoCuenta,
+		&cliente.RegistroSaldoCorriente,
+		&cliente.RegistroSaldo30Dias,
+		&cliente.RegistroSaldo60Dias,
+		&cliente.RegistroSaldo90Dias,
+		&cliente.RegistroSaldo120Dias,
+		&cliente.RegistroFechaFinPago,
+	)
+	utils.LogError("Problemas al leer registro: (Tarjeta) ", false, err)
+
+	return cliente
+}
+
 func consultaCliente(cedula string) string {
 	consulta := `
 		SELECT DISTINCT
@@ -196,6 +273,54 @@ func consultaCliente(cedula string) string {
 	return fmt.Sprintf(consulta, cedula, cedula)
 }
 
+func consultaClienteCedulaCuenta(cedula, cuenta string) string {
+	consulta := `
+		SELECT DISTINCT
+			saldo.registroCedula,
+			saldo.registroCuenta,
+			saldo.registroNombre,
+			saldo.registroLimite,
+			saldo.registroUltimoSaldo,
+			saldo.registroFechaUltimaCompra,
+			saldo.registroMontoUltimaCompra,
+			saldo.registroFechaApertura,
+			saldo.registroFechaCorte,
+			saldo.registroPagarAntesDe,
+			saldo.registroCorte,
+			saldo.registroEstado,
+			saldo.registroFechaUltimoPago,
+			saldo.registroMontoUltimoPago,
+			saldo.registroPagoMinimo,
+			saldo.registroCorreo,
+			saldo.registroTelefono,
+			saldo.registroFechaNacimiento,
+			saldo.registroSexo,
+			saldo.registroSucursal,
+			saldo.registroTipoCliente,
+			IFNULL(estadoCuenta.registroFechaEstoCuenta, '') AS registroFechaEstoCuenta,
+			IFNULL(estadoCuenta.registroNumeroCuenta, '') AS registroNumeroCuenta,
+			IFNULL(estadoCuenta.registroLimiteCredito, '') AS registroLimiteCredito,
+			IFNULL(estadoCuenta.registroSaldoDisponible, '') AS registroSaldoDisponible,
+			IFNULL(estadoCuenta.registroFechaInicioTran, '') AS registroFechaInicioTran,
+			IFNULL(estadoCuenta.registroFechaFinTran, '') AS registroFechaFinTran,
+			IFNULL(estadoCuenta.registroSaldoAnterior, '') AS registroSaldoAnterior,
+			IFNULL(estadoCuenta.registroPagoMinimo, '') AS registroPagoMinimo,
+			IFNULL(estadoCuenta.registroSaldoCorriente, '') AS registroSaldoCorriente,
+			IFNULL(estadoCuenta.registroSaldo30Dias, '') AS registroSaldo30Dias,
+			IFNULL(estadoCuenta.registroSaldo60Dias, '') AS registroSaldo60Dias,
+			IFNULL(estadoCuenta.registroSaldo90Dias, '') AS registroSaldo90Dias,
+			IFNULL(estadoCuenta.registroSaldo120Dias, '') AS registroSaldo120Dias,
+			IFNULL(estadoCuenta.registroFechaFinPago, '') AS registroFechaFinPago
+		FROM
+			rodelag_tarjetarodelag.saldo AS saldo
+			LEFT JOIN rodelag_tarjetarodelag.estadoCuenta AS estadoCuenta
+				ON saldo.registroCedula = estadoCuenta.registroIdentificacion
+		WHERE
+			saldo.registroCedula = '%s' AND saldo.registroCuenta = '%s'
+	`
+	return fmt.Sprintf(consulta, cedula, cuenta)
+}
+
 func consultaEstadoCuentaDetalle(cedula string) string {
 	consulta := `
 		SELECT
@@ -211,4 +336,21 @@ func consultaEstadoCuentaDetalle(cedula string) string {
 			registroIdentificacion = '%s' OR registroNumeroCuenta = '%s' 
 	`
 	return fmt.Sprintf(consulta, cedula, cedula)
+}
+
+func consultaEstadoCuentaDetalleCedulaCuenta(cedula, cuenta string) string {
+	consulta := `
+		SELECT
+			registroFechaTran,
+			registroNumeroDocumento,
+			registroDescripcionDocumento,
+			registroDebito,
+			registroCredito,
+			registroSaldo
+		FROM
+			rodelag_tarjetarodelag.estadoCuenta
+		WHERE
+			registroIdentificacion = '%s' AND registroNumeroCuenta = '%s' 
+	`
+	return fmt.Sprintf(consulta, cedula, cuenta)
 }

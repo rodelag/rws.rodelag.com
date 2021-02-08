@@ -69,7 +69,8 @@ func init() {
 			"conteo_listar": conteo.ConteoQuery()["conteo_listar"],
 
 			//Cliente Tarjeta Rodelag
-			"cliente_tarjeta_rodelag": tarjeta.TarjetaRodelagQuery()["cliente"],
+			"cliente_tarjeta_rodelag":               tarjeta.TarjetaRodelagQuery()["cliente"],
+			"cliente_tarjeta_rodelag_cedula_cuenta": tarjeta.TarjetaRodelagQuery()["cliente_cedula_cuenta"],
 
 			//Central teléfonica
 			"central_telefonica": central.CentralTelefonicaQuery()["central"],
