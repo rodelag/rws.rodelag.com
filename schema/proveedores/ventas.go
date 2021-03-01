@@ -9,16 +9,12 @@ import (
 	types "rws/types/proveedores"
 )
 
-func ProveedorInventarioQuery() map[string]*graphql.Field {
+func ProveedorVentasQuery() map[string]*graphql.Field {
 	schemas := map[string]*graphql.Field{
-		"proveedor_inventario_listar": {
-			Type:        graphql.NewList(types.ProveedorInventarioType),
+		"proveedor_ventas_listar": {
+			Type:        graphql.NewList(types.ProveedorVentasType),
 			Description: "Listar inventario del proveedor",
 			Args: graphql.FieldConfigArgument{
-				"sucursal": &graphql.ArgumentConfig{
-					Type:        graphql.String,
-					Description: "Sucursal",
-				},
 				"proveedor": &graphql.ArgumentConfig{
 					Type:        graphql.String,
 					Description: "Campo o columna para deferenciar entre proveedor o fabricante",
@@ -26,6 +22,10 @@ func ProveedorInventarioQuery() map[string]*graphql.Field {
 				"proveedorID": &graphql.ArgumentConfig{
 					Type:        graphql.String,
 					Description: "ID del proveedor o la marca del mismo",
+				},
+				"sucursal": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Sucursal",
 				},
 				"campo": &graphql.ArgumentConfig{
 					Type:        graphql.String,
@@ -42,6 +42,14 @@ func ProveedorInventarioQuery() map[string]*graphql.Field {
 				"condicion2": &graphql.ArgumentConfig{
 					Type:        graphql.String,
 					Description: "Condición para el campo secundaria",
+				},
+				"fechainicial": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Fecha inicial",
+				},
+				"fechafinal": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Fecha final",
 				},
 				"cursor": &graphql.ArgumentConfig{
 					Type:        graphql.Int,
@@ -61,18 +69,20 @@ func ProveedorInventarioQuery() map[string]*graphql.Field {
 					return nil, gqlerrors.FormatError(errors.New("Token de autorización inválido"))
 				}
 
-				sucursal, _ := p.Args["sucursal"].(string)
 				proveedor, _ := p.Args["proveedor"].(string)
 				proveedorID, _ := p.Args["proveedorID"].(string)
+				sucursal, _ := p.Args["sucursal"].(string)
 				campo, _ := p.Args["campo"].(string)
 				condicion, _ := p.Args["condicion"].(string)
 				campo2, _ := p.Args["campo2"].(string)
 				condicion2, _ := p.Args["condicion2"].(string)
+				fechainicial, _ := p.Args["fechainicial"].(string)
+				fechafinal, _ := p.Args["fechafinal"].(string)
 
 				cursor, _ := p.Args["cursor"].(int)
 				limite, _ := p.Args["limite"].(int)
 
-				return resolvers.ListarProveedorInventario(sucursal, proveedor, proveedorID, campo, condicion, campo2, condicion2, cursor, limite), nil
+				return resolvers.ListarProveedorVentas(proveedor, proveedorID, sucursal, campo, condicion, campo2, condicion2, fechainicial, fechafinal, cursor, limite), nil
 			},
 		},
 	}

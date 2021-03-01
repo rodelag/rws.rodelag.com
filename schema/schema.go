@@ -63,7 +63,10 @@ func init() {
 			"contactenosvc_listar": formularios.ContactenosVCQuery()["contactenosvc_listar"],
 
 			//Inventario de los proveedores
-			"proveedor_inventario_listar": proveedores.ProveedoreInventarioQuery()["proveedor_inventario_listar"],
+			"proveedor_inventario_listar": proveedores.ProveedorInventarioQuery()["proveedor_inventario_listar"],
+
+			//Ventas de los proveedores
+			"proveedor_ventas_listar": proveedores.ProveedorVentasQuery()["proveedor_ventas_listar"],
 
 			//Conteo de clientes en las tiendas
 			"conteo_listar": conteo.ConteoQuery()["conteo_listar"],
