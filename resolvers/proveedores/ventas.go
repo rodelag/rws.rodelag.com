@@ -140,11 +140,11 @@ func consultaVentas(proveedor, proveedorID, sucursal, campo, condicion, campo2, 
 						 FROM
 							 rodelag_proveedores.proveedores_elconix
 						 WHERE
-								 %s LIKE '%s'
+								 %s LIKE '%%%s'
 						   AND
-								 NomSuc LIKE '%s'
+								 NomSuc LIKE '%%%s'
 						   AND
-								 %s LIKE '%s'
+								 %s LIKE '%%%s'
 						   AND
 							 Fecha BETWEEN '%s' AND '%s'
 					UNION
@@ -171,11 +171,11 @@ func consultaVentas(proveedor, proveedorID, sucursal, campo, condicion, campo2, 
 						 FROM
 							 rodelag_proveedores.proveedores_elconix
 						 WHERE
-								 %s LIKE '%s'
+								 %s LIKE '%%%s'
 						   AND
-								 NomSuc LIKE '%s'
+								 NomSuc LIKE '%%%s'
 						   AND
-								 %s LIKE '%s'
+								 %s LIKE '%%%s'
 						   AND
 							 Fecha BETWEEN '%s' AND '%s') AS registros
 				WHERE
@@ -185,7 +185,7 @@ func consultaVentas(proveedor, proveedorID, sucursal, campo, condicion, campo2, 
 			limite = 20
 		}
 
-		return fmt.Sprintf(consulta, proveedor, proveedorID, sucursal, campo, condicion, fechainicial, fechafinal, cursor, limite, campo2, condicion2, sucursal, campo, condicion, fechainicial, fechafinal, cursor, limite)
+		return fmt.Sprintf(consulta, proveedor, proveedorID, sucursal, campo, condicion, fechainicial, fechafinal, campo2, condicion2, sucursal, campo, condicion, fechainicial, fechafinal, cursor, limite)
 	} else {
 		// INFO: Esta consulta es para los usuarios que son proveedores.
 		consulta = `
@@ -214,11 +214,11 @@ func consultaVentas(proveedor, proveedorID, sucursal, campo, condicion, campo2, 
 				(SELECT @cursor := 0) c,
 				rodelag_proveedores.proveedores_elconix
 			WHERE
-				%s LIKE '%s'
+				%s LIKE '%%%s'
 				AND
-				NomSuc LIKE '%s'
+				NomSuc LIKE '%%%s'
 				AND
-				%s LIKE '%s'
+				%s LIKE '%%%s'
 				AND
 				Fecha BETWEEN '%s' AND '%s'
 				AND
