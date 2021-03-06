@@ -6,6 +6,10 @@ var InventarioType = graphql.NewObject(graphql.ObjectConfig{
 	Name:        "Inventario",
 	Description: "Inventario",
 	Fields: graphql.Fields{
+		"Consecutivo": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Cursor para identificar cada registro, id único y secuencial",
+		},
 		"Suc": &graphql.Field{
 			Type:        graphql.String,
 			Description: "Sucursal",

@@ -9,6 +9,7 @@ import (
 )
 
 type Inventario struct {
+	Consecutivo,
 	Suc,
 	Departamento,
 	Codigo,
@@ -37,11 +38,11 @@ func conexionInventario() *sql.DB {
 	return connMySQL
 }
 
-func ListarInventario(busqueda string) []Inventario {
+func ListarInventario(busqueda string, cursor, limite int) []Inventario {
 	connMySQL := conexionInventario()
 	defer connMySQL.Close()
 
-	rows, err := connMySQL.Query(consulta(busqueda))
+	rows, err := connMySQL.Query(consulta(busqueda, cursor, limite))
 	utils.LogError("Problemas al listar los registros de la base de datos: (Inventario) ", false, err)
 	defer rows.Close()
 
@@ -49,6 +50,7 @@ func ListarInventario(busqueda string) []Inventario {
 
 	for rows.Next() {
 		err := rows.Scan(
+			&con.Consecutivo,
 			&con.Suc,
 			&con.Departamento,
 			&con.Codigo,
@@ -63,6 +65,7 @@ func ListarInventario(busqueda string) []Inventario {
 		)
 		utils.LogError("Problemas leer los datos: (Inventario) ", false, err)
 		cons = append(cons, Inventario{
+			Consecutivo:  con.Consecutivo,
 			Suc:          con.Suc,
 			Departamento: con.Departamento,
 			Codigo:       con.Codigo,
@@ -79,10 +82,11 @@ func ListarInventario(busqueda string) []Inventario {
 	return cons
 }
 
-func consulta(busqueda string) string {
+func consulta(busqueda string, cursor, limite int) string {
 	// TODO: Estar pendiente del rendimiento de esta consulta... se le puso un límite de 100 y trabajar más adelante en una paginación.
 	consulta := `
 		SELECT
+		   @cursor AS Consecutivo,
 		   Case When a.WareHouse ='HERMINIA' Then 'Bodega-CEDI' Else a.WareHouse End AS Suc,
 		   Category AS Departamento,
 		   b.Item_Number AS Codigo,
@@ -95,12 +99,14 @@ func consulta(busqueda string) string {
 		   IFNULL((select Fecha_Inicio from promotions p join promotions_products pp on p.id =pp.Promotion where CodeType =b.id and pricelist ='PRECIO REGULAR' and expira >CURDATE() order by expira desc limit 1)  ,'') AS FecIni,
 		   IFNULL((select Expira from promotions p join promotions_products pp on p.id =pp.Promotion where CodeType =b.id and pricelist ='PRECIO REGULAR' and expira >CURDATE() order by expira desc limit 1)  ,'') AS FecFin
 		FROM
+			(SELECT @cursor := 0) c,
 		   enx_rodelag.products_mview_instock_actualizado AS a
 		   INNER JOIN products AS b ON a.Item = b.ID
 		   inner join warehouses w2 on a.WareHouse =w2.nombre
 		WHERE a.WareHouse not like('bodega%%') and WareHouse not like ('inco%%') and WareHouse not like ('%%out%%') and WareHouse not like ('obso%%') and      
-			 CONCAT(replace(replace(replace(REPLACE(b.nombre,'  ',' '),'  ',' '),'  ',' '),'"',''), b.Item_Number, IFNULL(part_number, codigo_externo)) LIKE '%%%s%%' AND b.Status ='ACTIVO'    
-			 LIMIT 100;
+			 CONCAT(replace(replace(replace(REPLACE(b.nombre,'  ',' '),'  ',' '),'  ',' '),'"',''), b.Item_Number, IFNULL(part_number, codigo_externo)) LIKE '%%%s%%' AND b.Status ='ACTIVO'
+			AND
+			(@cursor := @cursor + 1) > %d LIMIT %d;
 	`
-	return fmt.Sprintf(consulta, busqueda)
+	return fmt.Sprintf(consulta, busqueda, cursor, limite)
 }
