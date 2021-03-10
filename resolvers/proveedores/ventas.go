@@ -38,7 +38,7 @@ func conexionProveedorVentas() *sql.DB {
 		viper.GetString("basedatos.mysql.rodelag.user"),
 		viper.GetString("basedatos.mysql.rodelag.password"),
 		viper.GetString("basedatos.mysql.rodelag.server"),
-		viper.GetString("basedatos.mysql.rodelag.database"),
+		"rodelag_proveedores",
 	)
 	connMySQL, errMySQL := sql.Open("mysql", connStringMySQL)
 	if errMySQL != nil {

@@ -35,6 +35,30 @@ func EstadoCuentaQuery() map[string]*graphql.Field {
 				return nil, nil
 			},
 		},
+		"estadocuenta_busqueda": {
+			Type:        graphql.NewList(types.SolicitudEstadoCuentaType),
+			Description: "Búsqueda de estados de cuenta",
+			Args: graphql.FieldConfigArgument{
+				"busqueda": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "Palabra a buscar",
+				},
+			},
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				_, isValid, err := auth.ValidateToken(p.Context.Value("token").(string))
+				if err != nil {
+					return nil, err
+				}
+				if !isValid {
+					return nil, gqlerrors.FormatError(errors.New("Token de autorización inválido"))
+				}
+
+				if busqueda, ok := p.Args["busqueda"].(string); ok {
+					return resolvers.BusquedaEstadoCuenta(busqueda), nil
+				}
+				return nil, nil
+			},
+		},
 		"estadocuenta_listar": {
 			Type:        graphql.NewList(types.SolicitudEstadoCuentaType),
 			Description: "Listado de estados de cuenta",
@@ -99,33 +123,17 @@ func EstadoCuentaMutation() map[string]*graphql.Field {
 				return resolvers.CrearSolicitudEstadoCuenta(nombre, apellido, correo, telefono, cedula), nil
 			},
 		},
-		"estadocuenta_crear_comentario": &graphql.Field{
-			Type:        types.SolicitudEstadoCuentaComentarioType,
-			Description: "Creación de comentario para el estado de cuenta",
+		"estadocuenta_editar": &graphql.Field{
+			Type:        types.SolicitudEstadoCuentaType,
+			Description: "Edición de Solicitud de Estado de Cuenta",
 			Args: graphql.FieldConfigArgument{
+				"id": &graphql.ArgumentConfig{
+					Type:        graphql.Int,
+					Description: "ID del registro",
+				},
 				"estado": &graphql.ArgumentConfig{
 					Type:        graphql.String,
 					Description: "Estado del registro",
-				},
-				"comentario": &graphql.ArgumentConfig{
-					Type:        graphql.String,
-					Description: "Comentario del agente para con el registro",
-				},
-				"formulario": &graphql.ArgumentConfig{
-					Type:        graphql.String,
-					Description: "Formulario al que pertenece el estado",
-				},
-				"usuario": &graphql.ArgumentConfig{
-					Type:        graphql.String,
-					Description: "Usuario que gestiona el registro",
-				},
-				"correoUsuario": &graphql.ArgumentConfig{
-					Type:        graphql.String,
-					Description: "Correo del usuario que gestiona el registro",
-				},
-				"idFormulario": &graphql.ArgumentConfig{
-					Type:        graphql.Int,
-					Description: "ID del registro",
 				},
 			},
 			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
@@ -137,13 +145,9 @@ func EstadoCuentaMutation() map[string]*graphql.Field {
 					return nil, gqlerrors.FormatError(errors.New("Token de autorización inválido"))
 				}
 				estado, _ := params.Args["estado"].(string)
-				comentario, _ := params.Args["comentario"].(string)
-				formulario, _ := params.Args["formulario"].(string)
-				usuario, _ := params.Args["usuario"].(string)
-				correoUsuario, _ := params.Args["correoUsuario"].(string)
-				idFormulario, _ := params.Args["idFormulario"].(int)
+				id, _ := params.Args["id"].(int)
 
-				return resolvers.CrearComentarioSolicitudEstadoCuenta(estado, comentario, formulario, usuario, correoUsuario, idFormulario), nil
+				return resolvers.EditarEstadoCuenta(id, estado), nil
 			},
 		},
 	}

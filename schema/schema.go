@@ -22,13 +22,30 @@ func init() {
 			"pagoach_ver":    formularios.PagoACHQuery()["pagoach_ver"],
 			"pagoach_listar": formularios.PagoACHQuery()["pagoach_listar"],
 
+			//Formulario de Afiliación de Sos
+			"sos_ver":      formularios.SosQuery()["sos_ver"],
+			"sos_listar":   formularios.SosQuery()["sos_listar"],
+			"sos_busqueda": formularios.SosQuery()["sos_busqueda"],
+
 			//Formulario de Solicitud de Estado de Cuenta
-			"estadocuenta_ver":    formularios.EstadoCuentaQuery()["estadocuenta_ver"],
-			"estadocuenta_listar": formularios.EstadoCuentaQuery()["estadocuenta_listar"],
+			"estadocuenta_ver":      formularios.EstadoCuentaQuery()["estadocuenta_ver"],
+			"estadocuenta_listar":   formularios.EstadoCuentaQuery()["estadocuenta_listar"],
+			"estadocuenta_busqueda": formularios.EstadoCuentaQuery()["estadocuenta_busqueda"],
+
+			//Formulario de Desempleo
+			"desempleo_ver":      formularios.DesempleoQuery()["desempleo_ver"],
+			"desempleo_listar":   formularios.DesempleoQuery()["desempleo_listar"],
+			"desempleo_busqueda": formularios.DesempleoQuery()["desempleo_busqueda"],
+
+			//Formulario de Arreglo de Pago
+			"arreglopago_ver":      formularios.ArregloPagoQuery()["arreglopago_ver"],
+			"arreglopago_listar":   formularios.ArregloPagoQuery()["arreglopago_listar"],
+			"arreglopago_busqueda": formularios.ArregloPagoQuery()["arreglopago_busqueda"],
 
 			//Formulario de Comprobante de Pago
-			"comprobantepago_ver":    formularios.ComprobantePagoQuery()["comprobantepago_ver"],
-			"comprobantepago_listar": formularios.ComprobantePagoQuery()["comprobantepago_listar"],
+			"comprobantepago_ver":      formularios.ComprobantePagoQuery()["comprobantepago_ver"],
+			"comprobantepago_listar":   formularios.ComprobantePagoQuery()["comprobantepago_listar"],
+			"comprobantepago_busqueda": formularios.ComprobantePagoQuery()["comprobantepago_busqueda"],
 
 			//Formulario de Solicitud de Aplazamiento de Pagos por la Crisis del COVID-19
 			"solicitudaplazamientopago_ver":    formularios.SolicitudAplazamientoPagoQuery()["solicitudaplazamientopago_ver"],
@@ -100,13 +117,25 @@ func init() {
 			"pagoach_crear":            formularios.PagoACHMutation()["pagoach_crear"],
 			"pagoach_crear_comentario": formularios.PagoACHMutation()["pagoach_crear_comentario"],
 
+			//Formulario de Afiliación de Sos
+			"sos_crear":  formularios.SosMutation()["sos_crear"],
+			"sos_editar": formularios.SosMutation()["sos_editar"],
+
+			//Formulario de Desempleo
+			"desempleo_crear":  formularios.DesempleoMutation()["desempleo_crear"],
+			"desempleo_editar": formularios.DesempleoMutation()["desempleo_editar"],
+
+			//Formulario de Arreglo de Pago
+			"arreglopago_crear":  formularios.ArregloPagoMutation()["arreglopago_crear"],
+			"arreglopago_editar": formularios.ArregloPagoMutation()["arreglopago_editar"],
+
 			//Formulario de Solicitud de Estado de Cuenta
-			"estadocuenta_crear":            formularios.EstadoCuentaMutation()["estadocuenta_crear"],
-			"estadocuenta_crear_comentario": formularios.EstadoCuentaMutation()["estadocuenta_crear_comentario"],
+			"estadocuenta_crear":  formularios.EstadoCuentaMutation()["estadocuenta_crear"],
+			"estadocuenta_editar": formularios.EstadoCuentaMutation()["estadocuenta_editar"],
 
 			//Formulario de Comprobante de Pago
-			"comprobantepago_crear":            formularios.ComprobantePagoMutation()["comprobantepago_crear"],
-			"comprobantepago_crear_comentario": formularios.ComprobantePagoMutation()["comprobantepago_crear_comentario"],
+			"comprobantepago_crear":  formularios.ComprobantePagoMutation()["comprobantepago_crear"],
+			"comprobantepago_editar": formularios.ComprobantePagoMutation()["comprobantepago_editar"],
 
 			//Formulario de Solicitud de Aplazamiento de Pagos por la Crisis del COVID-19
 			"solicitudaplazamientopago_crear":            formularios.SolicitudAplazamientoPagoMutation()["solicitudaplazamientopago_crear"],

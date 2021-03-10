@@ -2,13 +2,13 @@ package formularios
 
 import "github.com/graphql-go/graphql"
 
-var ComprobantePagoType = graphql.NewObject(graphql.ObjectConfig{
-	Name:        "ComprobantePago",
-	Description: "Comprobante de Pago",
+var DesempleoType = graphql.NewObject(graphql.ObjectConfig{
+	Name:        "Desempleo",
+	Description: "Desempleo",
 	Fields: graphql.Fields{
 		"id": &graphql.Field{
 			Type:        graphql.Int,
-			Description: "id del registro",
+			Description: "ID del registro",
 		},
 		"nombre": &graphql.Field{
 			Type:        graphql.String,
@@ -22,6 +22,10 @@ var ComprobantePagoType = graphql.NewObject(graphql.ObjectConfig{
 			Type:        graphql.String,
 			Description: "Cédula del cliente",
 		},
+		"edad": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Edad del cliente",
+		},
 		"correo": &graphql.Field{
 			Type:        graphql.String,
 			Description: "Correo del cliente",
@@ -30,17 +34,25 @@ var ComprobantePagoType = graphql.NewObject(graphql.ObjectConfig{
 			Type:        graphql.String,
 			Description: "Teléfono del cliente",
 		},
-		"estado": &graphql.Field{
+		"direccionDomicilio": &graphql.Field{
 			Type:        graphql.String,
-			Description: "Estado del registro",
+			Description: "Dirección del cliente",
 		},
-		"comprobantePago": &graphql.Field{
+		"nombreEmpresa": &graphql.Field{
 			Type:        graphql.String,
-			Description: "Comprobante de pago",
+			Description: "Empresa donde labora el cliente",
+		},
+		"tiempoLaboral": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Tiempo laboral del cliente",
 		},
 		"fechaRegistro": &graphql.Field{
 			Type:        graphql.String,
-			Description: "Fecha del registro",
+			Description: "Fecha de registro",
+		},
+		"estado": &graphql.Field{
+			Type:        graphql.String,
+			Description: "Estado",
 		},
 	},
 })

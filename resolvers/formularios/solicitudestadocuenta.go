@@ -18,18 +18,6 @@ type SolicitudEstadoCuenta struct {
 	Cedula        string
 	Estado        string
 	FechaRegistro string
-	Comentarios   []ComentarioSolicitudEstadoCuenta
-}
-
-type ComentarioSolicitudEstadoCuenta struct {
-	ID,
-	Estado,
-	Comentario,
-	FechaRegistro,
-	Formulario,
-	Usuario,
-	CorreoUsuario string
-	IDFormulario int
 }
 
 func conexionSolicitudEstadoCuenta() *sql.DB {
@@ -38,7 +26,7 @@ func conexionSolicitudEstadoCuenta() *sql.DB {
 		viper.GetString("basedatos.mysql.rodelag.user"),
 		viper.GetString("basedatos.mysql.rodelag.password"),
 		viper.GetString("basedatos.mysql.rodelag.server"),
-		viper.GetString("basedatos.mysql.rodelag.database"),
+		"rodelag_ovnicom",
 	)
 	connMySQL, errMySQL := sql.Open("mysql", connStringMySQL)
 	if errMySQL != nil {
@@ -51,43 +39,17 @@ func VerSolicitudEstadoCuenta(id int) SolicitudEstadoCuenta {
 	connMySQL := conexionSolicitudEstadoCuenta()
 	defer connMySQL.Close()
 
-	sec := SolicitudEstadoCuenta{
-		Comentarios: func() []ComentarioSolicitudEstadoCuenta {
-			consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_estadocuenta", id)
+	sec := SolicitudEstadoCuenta{}
 
-			rows, err := connMySQL.Query(consulta)
-			utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: (SolicitudEstadoCuenta) ", false, err)
-			defer rows.Close()
-
-			comentario, comentarios := ComentarioSolicitudEstadoCuenta{}, []ComentarioSolicitudEstadoCuenta{}
-
-			for rows.Next() {
-				err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
-				utils.LogError("Problemas leer los estados: (SolicitudEstadoCuenta) ", false, err)
-				comentarios = append(comentarios, ComentarioSolicitudEstadoCuenta{
-					ID:            comentario.ID,
-					Estado:        comentario.Estado,
-					Comentario:    comentario.Comentario,
-					FechaRegistro: comentario.FechaRegistro,
-					Formulario:    comentario.Formulario,
-					Usuario:       comentario.Usuario,
-					CorreoUsuario: comentario.CorreoUsuario,
-					IDFormulario:  comentario.IDFormulario,
-				})
-			}
-			return comentarios
-		}(),
-	}
-
-	err := connMySQL.QueryRow("SELECT *, IFNULL((SELECT estado FROM formulario_comentarios WHERE formulario = 'formulario_estadocuenta' AND idFormulario = a.id ORDER BY fechaRegistro DESC LIMIT 1), 'pendiente') AS estado FROM formulario_estadocuenta AS a WHERE a.id = ?;", id).Scan(
+	err := connMySQL.QueryRow("SELECT * FROM formulario_estadocuenta WHERE id = ?;", id).Scan(
 		&sec.ID,
 		&sec.Nombre,
 		&sec.Apellido,
 		&sec.Correo,
 		&sec.Telefono,
 		&sec.Cedula,
-		&sec.FechaRegistro,
 		&sec.Estado,
+		&sec.FechaRegistro,
 	)
 	utils.LogError("Problemas al leer registro: (SolicitudEstadoCuenta) ", false, err)
 
@@ -98,7 +60,7 @@ func ListarEstadoCuenta() []SolicitudEstadoCuenta {
 	connMySQL := conexionSolicitudEstadoCuenta()
 	defer connMySQL.Close()
 
-	rows, err := connMySQL.Query("SELECT a.*, IFNULL((SELECT estado FROM formulario_comentarios WHERE formulario = 'formulario_estadocuenta' AND idFormulario = a.id ORDER BY fechaRegistro DESC LIMIT 1), 'pendiente') AS estado FROM formulario_estadocuenta AS a;")
+	rows, err := connMySQL.Query("SELECT * FROM formulario_estadocuenta;")
 	utils.LogError("Problemas al listar los registros de la base de datos: (SolicitudEstadoCuenta) ", true, err)
 	defer rows.Close()
 
@@ -106,7 +68,7 @@ func ListarEstadoCuenta() []SolicitudEstadoCuenta {
 	ssec := []SolicitudEstadoCuenta{}
 
 	for rows.Next() {
-		err := rows.Scan(&sec.ID, &sec.Nombre, &sec.Apellido, &sec.Correo, &sec.Telefono, &sec.Cedula, &sec.FechaRegistro, &sec.Estado)
+		err := rows.Scan(&sec.ID, &sec.Nombre, &sec.Apellido, &sec.Correo, &sec.Telefono, &sec.Cedula, &sec.Estado, &sec.FechaRegistro)
 		utils.LogError("Problemas leer los datos: (SolicitudEstadoCuenta) ", true, err)
 		ssec = append(ssec, SolicitudEstadoCuenta{
 			ID:            sec.ID,
@@ -117,34 +79,61 @@ func ListarEstadoCuenta() []SolicitudEstadoCuenta {
 			Cedula:        sec.Cedula,
 			Estado:        sec.Estado,
 			FechaRegistro: sec.FechaRegistro,
-			Comentarios: func() []ComentarioSolicitudEstadoCuenta {
-				consulta := fmt.Sprintf("SELECT * FROM formulario_comentarios WHERE formulario = '%s' AND idFormulario = '%d';", "formulario_estadocuenta", sec.ID)
-
-				rows, err := connMySQL.Query(consulta)
-				utils.LogError("Problemas al listar los comentarios de los registros de la base de datos: (SolicitudEstadoCuenta) ", true, err)
-				defer rows.Close()
-
-				comentario, comentarios := ComentarioSolicitudEstadoCuenta{}, []ComentarioSolicitudEstadoCuenta{}
-
-				for rows.Next() {
-					err := rows.Scan(&comentario.ID, &comentario.Estado, &comentario.Comentario, &comentario.FechaRegistro, &comentario.Formulario, &comentario.Usuario, &comentario.CorreoUsuario, &comentario.IDFormulario)
-					utils.LogError("Problemas leer los estados: (SolicitudEstadoCuenta) ", true, err)
-					comentarios = append(comentarios, ComentarioSolicitudEstadoCuenta{
-						ID:            comentario.ID,
-						Estado:        comentario.Estado,
-						Comentario:    comentario.Comentario,
-						FechaRegistro: comentario.FechaRegistro,
-						Formulario:    comentario.Formulario,
-						Usuario:       comentario.Usuario,
-						CorreoUsuario: comentario.CorreoUsuario,
-						IDFormulario:  comentario.IDFormulario,
-					})
-				}
-				return comentarios
-			}(),
 		})
 	}
 	return ssec
+}
+
+func BusquedaEstadoCuenta(busqueda string) []SolicitudEstadoCuenta {
+	connMySQL := conexionSolicitudEstadoCuenta()
+	defer connMySQL.Close()
+
+	rows, err := connMySQL.Query(
+		fmt.Sprintf("SELECT * FROM formulario_estadocuenta WHERE (nombre LIKE '%%%s%%') OR (apellido LIKE '%%%s%%') OR (cedula LIKE '%%%s%%') OR (estado LIKE '%%%s%%');",
+			busqueda,
+			busqueda,
+			busqueda,
+			busqueda))
+
+	utils.LogError("Problemas al listar los registros de la base de datos: (Solicitud Estado Cuenta) ", true, err)
+	defer rows.Close()
+
+	sec := SolicitudEstadoCuenta{}
+	ssec := []SolicitudEstadoCuenta{}
+
+	for rows.Next() {
+		err := rows.Scan(&sec.ID, &sec.Nombre, &sec.Apellido, &sec.Correo, &sec.Telefono, &sec.Cedula, &sec.Estado, &sec.FechaRegistro)
+		utils.LogError("Problemas leer los datos: (SolicitudEstadoCuenta) ", true, err)
+		ssec = append(ssec, SolicitudEstadoCuenta{
+			ID:            sec.ID,
+			Nombre:        sec.Nombre,
+			Apellido:      sec.Apellido,
+			Correo:        sec.Correo,
+			Telefono:      sec.Telefono,
+			Cedula:        sec.Cedula,
+			Estado:        sec.Estado,
+			FechaRegistro: sec.FechaRegistro,
+		})
+	}
+	return ssec
+}
+
+func EditarEstadoCuenta(id int, estado string) SolicitudEstadoCuenta {
+	sec := SolicitudEstadoCuenta{
+		ID:     id,
+		Estado: estado,
+	}
+
+	connMySQL := conexionSolicitudEstadoCuenta()
+	defer connMySQL.Close()
+
+	conn, err := connMySQL.Prepare("UPDATE formulario_estadocuenta SET estado = ? WHERE id = ?;")
+	utils.LogError("Problemas al crear el registro en la base de datos: (Solicitud Estado Cuenta) ", true, err)
+	defer conn.Close()
+
+	conn.Exec(sec.Estado, sec.ID)
+
+	return sec
 }
 
 func CrearSolicitudEstadoCuenta(nombre, apellido, correo, telefono, cedula string) SolicitudEstadoCuenta {
@@ -167,27 +156,4 @@ func CrearSolicitudEstadoCuenta(nombre, apellido, correo, telefono, cedula strin
 	conn.Exec(sec.Nombre, sec.Apellido, sec.Correo, sec.Telefono, sec.Cedula, sec.FechaRegistro)
 
 	return sec
-}
-
-func CrearComentarioSolicitudEstadoCuenta(estado, comentario, formulario, usuario, correoUsuario string, idFormulario int) ComentarioSolicitudEstadoCuenta {
-	c := ComentarioSolicitudEstadoCuenta{
-		Estado:        estado,
-		Comentario:    comentario,
-		Formulario:    formulario,
-		Usuario:       usuario,
-		CorreoUsuario: correoUsuario,
-		IDFormulario:  idFormulario,
-		FechaRegistro: time.Now().Format("2006-01-02 15:04:05"),
-	}
-
-	connMySQL := conexionSolicitudEstadoCuenta()
-	defer connMySQL.Close()
-
-	conn, err := connMySQL.Prepare("INSERT INTO formulario_comentarios (estado, comentario, formulario, usuario, correoUsuario, idFormulario, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?, ?)")
-	utils.LogError("Problemas al crear el estado en la base de datos: (SolicitudEstadoCuenta) ", false, err)
-	defer conn.Close()
-
-	conn.Exec(c.Estado, c.Comentario, c.Formulario, c.Usuario, c.CorreoUsuario, c.IDFormulario, c.FechaRegistro)
-
-	return c
 }

@@ -9,11 +9,11 @@ import (
 	types "rws/types/formularios"
 )
 
-func ComprobantePagoQuery() map[string]*graphql.Field {
+func SosQuery() map[string]*graphql.Field {
 	schemas := map[string]*graphql.Field{
-		"comprobantepago_ver": {
-			Type:        types.ComprobantePagoType,
-			Description: "Ver pago ACH",
+		"sos_ver": {
+			Type:        types.SosType,
+			Description: "Ver Afiliación de Sos",
 			Args: graphql.FieldConfigArgument{
 				"id": &graphql.ArgumentConfig{
 					Type:        graphql.Int,
@@ -30,14 +30,14 @@ func ComprobantePagoQuery() map[string]*graphql.Field {
 				}
 
 				if id, ok := p.Args["id"].(int); ok {
-					return resolvers.VerComprobantePago(id), nil
+					return resolvers.VerSos(id), nil
 				}
 				return nil, nil
 			},
 		},
-		"comprobantepago_busqueda": {
-			Type:        graphql.NewList(types.ComprobantePagoType),
-			Description: "Búsqueda pago ACH",
+		"sos_busqueda": {
+			Type:        graphql.NewList(types.SosType),
+			Description: "Búsqueda de Afiliación de Sos",
 			Args: graphql.FieldConfigArgument{
 				"busqueda": &graphql.ArgumentConfig{
 					Type:        graphql.String,
@@ -54,13 +54,14 @@ func ComprobantePagoQuery() map[string]*graphql.Field {
 				}
 
 				if busqueda, ok := p.Args["busqueda"].(string); ok {
-					return resolvers.BusquedaComprobantePago(busqueda), nil
+					return resolvers.BusquedaSos(busqueda), nil
 				}
 				return nil, nil
 			},
 		},
-		"comprobantepago_listar": {
-			Type: graphql.NewList(types.ComprobantePagoType),
+		"sos_listar": {
+			Type:        graphql.NewList(types.SosType),
+			Description: "Listar Afiliación de Sos",
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				_, isValid, err := auth.ValidateToken(p.Context.Value("token").(string))
 				if err != nil {
@@ -70,18 +71,18 @@ func ComprobantePagoQuery() map[string]*graphql.Field {
 					return nil, gqlerrors.FormatError(errors.New("Token de autorización inválido"))
 				}
 
-				return resolvers.ListarComprobantePago(), nil
+				return resolvers.ListarSos(), nil
 			},
 		},
 	}
 	return schemas
 }
 
-func ComprobantePagoMutation() map[string]*graphql.Field {
+func SosMutation() map[string]*graphql.Field {
 	schemas := map[string]*graphql.Field{
-		"comprobantepago_crear": &graphql.Field{
-			Type:        types.ComprobantePagoType,
-			Description: "Creación de Solicitud de Estado de Cuenta",
+		"sos_crear": &graphql.Field{
+			Type:        types.SosType,
+			Description: "Creación de Afiliación de Sos",
 			Args: graphql.FieldConfigArgument{
 				"nombre": &graphql.ArgumentConfig{
 					Type:        graphql.String,
@@ -103,10 +104,6 @@ func ComprobantePagoMutation() map[string]*graphql.Field {
 					Type:        graphql.String,
 					Description: "Teléfono del cliente",
 				},
-				"comprobantePago": &graphql.ArgumentConfig{
-					Type:        graphql.String,
-					Description: "Comprobante de Pago",
-				},
 			},
 			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
 				_, isValid, err := auth.ValidateToken(params.Context.Value("token").(string))
@@ -121,15 +118,14 @@ func ComprobantePagoMutation() map[string]*graphql.Field {
 				apellido, _ := params.Args["apellido"].(string)
 				cedula, _ := params.Args["cedula"].(string)
 				correo, _ := params.Args["correo"].(string)
-				comprobantePago, _ := params.Args["comprobantePago"].(string)
 				telefono, _ := params.Args["telefono"].(string)
 
-				return resolvers.CrearComprobantePago(nombre, apellido, cedula, correo, telefono, comprobantePago), nil
+				return resolvers.CrearSos(nombre, apellido, cedula, correo, telefono), nil
 			},
 		},
-		"comprobantepago_editar": &graphql.Field{
-			Type:        types.ComprobantePagoType,
-			Description: "Edición de los comentarios del comprobante de pago",
+		"sos_editar": &graphql.Field{
+			Type:        types.SosType,
+			Description: "Edición de Afiliación de Sos",
 			Args: graphql.FieldConfigArgument{
 				"id": &graphql.ArgumentConfig{
 					Type:        graphql.Int,
@@ -151,7 +147,7 @@ func ComprobantePagoMutation() map[string]*graphql.Field {
 				estado, _ := params.Args["estado"].(string)
 				id, _ := params.Args["id"].(int)
 
-				return resolvers.EditarComprobantePago(id, estado), nil
+				return resolvers.EditarSos(id, estado), nil
 			},
 		},
 	}
